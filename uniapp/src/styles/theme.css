@@ -1,0 +1,107 @@
+/**
+ * 全局主题变量
+ * 基于 DeepSeek 配色方案
+ */
+
+:root {
+  /* ========== 主色调 ========== */
+  --color-primary: #1877F2;
+  --color-primary-light: #3b82f6;
+  --color-primary-lighter: #93c5fd;
+  --color-primary-dark: #1d4ed8;
+  --color-primary-darker: #1e40af;
+
+  /* ========== 中性色 ========== */
+  --color-neutral-00: #ffffff;
+  --color-neutral-50: #f9fafb;
+  --color-neutral-60: #f5f6f7;
+  --color-neutral-75: #f1f3f5;
+  --color-neutral-100: #ebeef2;
+  --color-neutral-150: #e1e5ea;
+  --color-neutral-200: #e1e5ea;
+  --color-neutral-300: #cfd3d6;
+  --color-neutral-400: #adb2b8;
+  --color-neutral-500: #979da6;
+  --color-neutral-600: #81858c;
+  --color-neutral-700: #61666b;
+  --color-neutral-750: #43454a;
+  --color-neutral-800: #353638;
+  --color-neutral-850: #2c2c2e;
+  --color-neutral-875: #232324;
+  --color-neutral-900: #1b1b1c;
+  --color-neutral-950: #151517;
+  --color-neutral-1000: #000000;
+
+  /* ========== 功能色 ========== */
+  --color-success: #22c55e;
+  --color-success-light: #4ed17e;
+  --color-warning: #f59e0b;
+  --color-warning-light: #f7ad31;
+  --color-error: #ef4444;
+  --color-error-light: #f25a5a;
+  --color-error-dark: #ec1313;
+  --color-error-bg: #fef2f2;
+  --color-error-border: #fee2e2;
+  --color-info: #3b82f6;
+  --color-info-light: #60a5fa;
+
+  /* ========== 背景色 ========== */
+  --bg-page: var(--color-neutral-50);
+  --bg-card: var(--color-neutral-00);
+  --bg-input: var(--color-neutral-50);
+  --bg-disabled: var(--color-neutral-150);
+  --bg-hover: var(--color-neutral-60);
+  --bg-active: var(--color-neutral-100);
+
+  /* ========== 文字色 ========== */
+  --text-primary: var(--color-neutral-900);
+  --text-secondary: var(--color-neutral-700);
+  --text-tertiary: var(--color-neutral-600);
+  --text-placeholder: var(--color-neutral-500);
+  --text-disabled: var(--color-neutral-500);
+  --text-inverse: var(--color-neutral-00);
+
+  /* ========== 边框色 ========== */
+  --border-default: var(--color-neutral-150);
+  --border-hover: var(--color-neutral-300);
+  --border-focus: var(--color-primary);
+  --border-divider: var(--color-neutral-150);
+
+  /* ========== 阴影 ========== */
+  --shadow-sm: 0 1rpx 3rpx rgba(57, 100, 254, 0.05);
+  --shadow-md: 0 4rpx 20rpx rgba(57, 100, 254, 0.08), 0 1rpx 3rpx rgba(57, 100, 254, 0.05);
+  --shadow-lg: 0 4rpx 16rpx rgba(57, 100, 254, 0.25);
+  --shadow-btn: 0 4rpx 16rpx rgba(57, 100, 254, 0.35);
+  --shadow-btn-active: 0 2rpx 8rpx rgba(57, 100, 254, 0.4);
+
+  /* ========== 间距 ========== */
+  --space-xs: 8rpx;
+  --space-sm: 16rpx;
+  --space-md: 24rpx;
+  --space-lg: 32rpx;
+  --space-xl: 40rpx;
+  --space-2xl: 48rpx;
+  --space-3xl: 60rpx;
+
+  /* ========== 圆角 ========== */
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 20rpx;
+  --radius-full: 9999rpx;
+
+  /* ========== 字体大小 ========== */
+  --text-xs: 22rpx;
+  --text-sm: 26rpx;
+  --text-base: 28rpx;
+  --text-md: 30rpx;
+  --text-lg: 34rpx;
+  --text-xl: 38rpx;
+  --text-2xl: 44rpx;
+
+  /* ========== 字体粗细 ========== */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+}

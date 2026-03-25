@@ -1,0 +1,491 @@
+# 面试场景配置
+# 定义不同岗位的面试流程、Agent 配置和评估标准
+
+scenarios:
+  # ==================== 前端岗位 ====================
+  frontend_junior:
+    name: "前端初级工程师"
+    description: "面向初级前端开发者的面试场景"
+    target_level: "junior"
+    required_experience: "0-2年"
+    agents:
+      - interviewer
+      - evaluator
+    flow:
+      - self_intro
+      - html_css_basics
+      - js_fundamentals
+      - react_basics
+      - coding_simple
+      - behavioral
+      - q_and_a
+    stages:
+      self_intro:
+        name: "自我介绍"
+        duration: "3-5分钟"
+        description: "候选人自我介绍，了解背景和经历"
+      html_css_basics:
+        name: "HTML/CSS 基础"
+        duration: "10-15分钟"
+        description: "考察 HTML 语义化、CSS 布局、响应式设计等基础知识"
+        topics:
+          - "HTML5 语义化标签"
+          - "CSS 盒模型"
+          - "Flexbox 布局"
+          - "CSS 选择器优先级"
+      js_fundamentals:
+        name: "JavaScript 基础"
+        duration: "15-20分钟"
+        description: "考察 JS 基础概念和常用 API"
+        topics:
+          - "数据类型和变量"
+          - "作用域和闭包"
+          - "Promise 和异步"
+          - "DOM 操作"
+      react_basics:
+        name: "React 基础"
+        duration: "10-15分钟"
+        description: "考察 React 基础概念"
+        topics:
+          - "组件和 Props"
+          - "State 管理"
+          - "生命周期"
+          - "Hooks 基础"
+      coding_simple:
+        name: "简单编程题"
+        duration: "15-20分钟"
+        description: "完成一道简单的编程题"
+        difficulty: "easy"
+      behavioral:
+        name: "行为面试"
+        duration: "10-15分钟"
+        description: "了解候选人的软技能和团队协作能力"
+      q_and_a:
+        name: "问答环节"
+        duration: "5-10分钟"
+        description: "候选人提问，面试官解答"
+    evaluation_criteria:
+      technical_knowledge:
+        weight: 0.4
+        description: "技术知识掌握程度"
+      coding_ability:
+        weight: 0.3
+        description: "编码能力"
+      learning_potential:
+        weight: 0.2
+        description: "学习潜力"
+      communication:
+        weight: 0.1
+        description: "沟通表达能力"
+
+  frontend_senior:
+    name: "前端高级工程师"
+    description: "面向高级前端开发者的面试场景"
+    target_level: "senior"
+    required_experience: "5年以上"
+    agents:
+      - interviewer
+      - evaluator
+      - coach
+    flow:
+      - self_intro
+      - deep_dive_js
+      - system_design_frontend
+      - react_advanced
+      - performance_optimization
+      - coding_complex
+      - behavioral_senior
+      - q_and_a
+    stages:
+      self_intro:
+        name: "自我介绍"
+        duration: "5分钟"
+      deep_dive_js:
+        name: "JavaScript 深入"
+        duration: "15-20分钟"
+        description: "深入考察 JS 高级特性"
+        topics:
+          - "原型链和继承"
+          - "事件循环机制"
+          - "内存管理和垃圾回收"
+          - "设计模式"
+      system_design_frontend:
+        name: "前端系统设计"
+        duration: "20-30分钟"
+        description: "设计一个前端应用架构"
+        topics:
+          - "组件设计"
+          - "状态管理方案"
+          - "性能优化策略"
+          - "工程化实践"
+      react_advanced:
+        name: "React 高级"
+        duration: "15-20分钟"
+        description: "考察 React 高级用法和原理"
+        topics:
+          - "虚拟 DOM 原理"
+          - "Fiber 架构"
+          - "并发特性"
+          - "自定义 Hooks"
+      performance_optimization:
+        name: "性能优化"
+        duration: "10-15分钟"
+        description: "前端性能优化方案"
+        topics:
+          - "加载性能"
+          - "运行时性能"
+          - "渲染优化"
+      coding_complex:
+        name: "复杂编程题"
+        duration: "20-30分钟"
+        description: "完成一道复杂的编程题"
+        difficulty: "hard"
+      behavioral_senior:
+        name: "行为面试"
+        duration: "15-20分钟"
+        description: "了解候选人的领导力和架构思维"
+    evaluation_criteria:
+      technical_depth:
+        weight: 0.3
+        description: "技术深度"
+      architecture_ability:
+        weight: 0.25
+        description: "架构设计能力"
+      problem_solving:
+        weight: 0.2
+        description: "问题解决能力"
+      leadership:
+        weight: 0.15
+        description: "技术领导力"
+      communication:
+        weight: 0.1
+        description: "沟通表达能力"
+
+  # ==================== 后端岗位 ====================
+  backend_junior:
+    name: "后端初级工程师"
+    description: "面向初级后端开发者的面试场景"
+    target_level: "junior"
+    required_experience: "0-2年"
+    agents:
+      - interviewer
+      - evaluator
+    flow:
+      - self_intro
+      - language_basics
+      - database_basics
+      - api_design
+      - coding_simple
+      - behavioral
+      - q_and_a
+    stages:
+      language_basics:
+        name: "编程语言基础"
+        duration: "15-20分钟"
+        description: "考察编程语言基础"
+        topics:
+          - "数据结构和类型"
+          - "控制流和函数"
+          - "面向对象编程"
+          - "异常处理"
+      database_basics:
+        name: "数据库基础"
+        duration: "10-15分钟"
+        description: "考察数据库基础知识"
+        topics:
+          - "SQL 基础"
+          - "索引原理"
+          - "事务基础"
+      api_design:
+        name: "API 设计"
+        duration: "10-15分钟"
+        description: "RESTful API 设计"
+        topics:
+          - "RESTful 原则"
+          - "HTTP 方法"
+          - "状态码"
+    evaluation_criteria:
+      technical_knowledge:
+        weight: 0.4
+        description: "技术知识"
+      coding_ability:
+        weight: 0.3
+        description: "编码能力"
+      learning_potential:
+        weight: 0.2
+        description: "学习潜力"
+      communication:
+        weight: 0.1
+        description: "沟通表达"
+
+  backend_senior:
+    name: "后端高级工程师"
+    description: "面向高级后端开发者的面试场景"
+    target_level: "senior"
+    required_experience: "5年以上"
+    agents:
+      - interviewer
+      - evaluator
+      - coach
+    flow:
+      - self_intro
+      - system_design
+      - distributed_systems
+      - database_advanced
+      - microservices
+      - coding_complex
+      - behavioral_senior
+      - q_and_a
+    stages:
+      system_design:
+        name: "系统设计"
+        duration: "30-40分钟"
+        description: "设计一个分布式系统"
+        topics:
+          - "系统架构设计"
+          - "高可用设计"
+          - "扩展性设计"
+          - "安全性考虑"
+      distributed_systems:
+        name: "分布式系统"
+        duration: "20-30分钟"
+        description: "分布式系统核心概念"
+        topics:
+          - "CAP 理论"
+          - "一致性算法"
+          - "分布式事务"
+          - "消息队列"
+      database_advanced:
+        name: "数据库高级"
+        duration: "15-20分钟"
+        description: "数据库高级话题"
+        topics:
+          - "查询优化"
+          - "分库分表"
+          - "缓存策略"
+          - "NoSQL 数据库"
+      microservices:
+        name: "微服务架构"
+        duration: "15-20分钟"
+        description: "微服务架构设计"
+        topics:
+          - "服务拆分"
+          - "服务治理"
+          - "链路追踪"
+          - "容器化部署"
+    evaluation_criteria:
+      system_design:
+        weight: 0.3
+        description: "系统设计能力"
+      technical_depth:
+        weight: 0.25
+        description: "技术深度"
+      problem_solving:
+        weight: 0.2
+        description: "问题解决能力"
+      architecture_ability:
+        weight: 0.15
+        description: "架构能力"
+      leadership:
+        weight: 0.1
+        description: "技术领导力"
+
+  # ==================== 全栈岗位 ====================
+  fullstack:
+    name: "全栈工程师"
+    description: "面向全栈开发者的面试场景"
+    target_level: "mid"
+    required_experience: "3-5年"
+    agents:
+      - interviewer
+      - evaluator
+      - coach
+    flow:
+      - self_intro
+      - frontend_basics
+      - backend_basics
+      - fullstack_integration
+      - system_design_simple
+      - coding_fullstack
+      - behavioral
+      - q_and_a
+    stages:
+      frontend_basics:
+        name: "前端基础"
+        duration: "15-20分钟"
+        description: "前端基础知识"
+      backend_basics:
+        name: "后端基础"
+        duration: "15-20分钟"
+        description: "后端基础知识"
+      fullstack_integration:
+        name: "全栈整合"
+        duration: "15-20分钟"
+        description: "前后端整合能力"
+      system_design_simple:
+        name: "简单系统设计"
+        duration: "20-30分钟"
+        description: "设计一个完整的 Web 应用"
+      coding_fullstack:
+        name: "全栈编程题"
+        duration: "30-40分钟"
+        description: "完成一个全栈功能实现"
+    evaluation_criteria:
+      frontend_skills:
+        weight: 0.25
+        description: "前端技能"
+      backend_skills:
+        weight: 0.25
+        description: "后端技能"
+      integration_ability:
+        weight: 0.2
+        description: "整合能力"
+      problem_solving:
+        weight: 0.2
+        description: "问题解决能力"
+      communication:
+        weight: 0.1
+        description: "沟通表达"
+
+  # ==================== 算法岗位 ====================
+  algorithm:
+    name: "算法工程师"
+    description: "面向算法工程师的面试场景"
+    target_level: "mid"
+    required_experience: "2-5年"
+    agents:
+      - interviewer
+      - evaluator
+    flow:
+      - self_intro
+      - algorithm_basics
+      - data_structures
+      - algorithm_design
+      - coding_algorithm
+      - machine_learning_basics
+      - behavioral
+      - q_and_a
+    stages:
+      algorithm_basics:
+        name: "算法基础"
+        duration: "15-20分钟"
+        description: "基础算法知识"
+        topics:
+          - "时间/空间复杂度"
+          - "排序算法"
+          - "查找算法"
+          - "递归和迭代"
+      data_structures:
+        name: "数据结构"
+        duration: "15-20分钟"
+        description: "常用数据结构"
+        topics:
+          - "数组和链表"
+          - "栈和队列"
+          - "树和图"
+          - "哈希表"
+      algorithm_design:
+        name: "算法设计"
+        duration: "20-30分钟"
+        description: "算法设计技巧"
+        topics:
+          - "动态规划"
+          - "贪心算法"
+          - "分治法"
+          - "回溯法"
+      coding_algorithm:
+        name: "算法编程题"
+        duration: "30-40分钟"
+        description: "完成 2-3 道算法题"
+        difficulty: "medium"
+      machine_learning_basics:
+        name: "机器学习基础"
+        duration: "10-15分钟"
+        description: "ML 基础概念（可选）"
+    evaluation_criteria:
+      algorithm_knowledge:
+        weight: 0.35
+        description: "算法知识"
+      coding_ability:
+        weight: 0.35
+        description: "编码能力"
+      problem_solving:
+        weight: 0.2
+        description: "问题解决能力"
+      communication:
+        weight: 0.1
+        description: "沟通表达"
+
+  # ==================== 行为面试 ====================
+  behavioral:
+    name: "行为面试"
+    description: "专注于软技能的行为面试场景"
+    target_level: "any"
+    agents:
+      - interviewer
+      - evaluator
+    flow:
+      - self_intro
+      - teamwork
+      - conflict_resolution
+      - leadership
+      - adaptability
+      - motivation
+      - q_and_a
+    stages:
+      teamwork:
+        name: "团队协作"
+        duration: "10-15分钟"
+        description: "团队合作能力"
+        topics:
+          - "团队项目经验"
+          - "协作工具使用"
+          - "跨部门沟通"
+      conflict_resolution:
+        name: "冲突解决"
+        duration: "10-15分钟"
+        description: "处理冲突的能力"
+        topics:
+          - "技术分歧处理"
+          - "人际冲突解决"
+          - "压力管理"
+      leadership:
+        name: "领导力"
+        duration: "10-15分钟"
+        description: "领导能力（针对高级岗位）"
+        topics:
+          - "团队管理经验"
+          - "项目推动能力"
+          - "人才培养"
+      adaptability:
+        name: "适应能力"
+        duration: "10-15分钟"
+        description: "适应变化的能力"
+        topics:
+          - "技术栈切换"
+          - "快速学习"
+          - "应对变化"
+      motivation:
+        name: "求职动机"
+        duration: "10-15分钟"
+        description: "了解求职动机"
+        topics:
+          - "职业规划"
+          - "离职原因"
+          - "期望匹配"
+    evaluation_criteria:
+      teamwork:
+        weight: 0.25
+        description: "团队协作"
+      communication:
+        weight: 0.25
+        description: "沟通能力"
+      problem_solving:
+        weight: 0.2
+        description: "问题解决"
+      adaptability:
+        weight: 0.15
+        description: "适应能力"
+      motivation:
+        weight: 0.15
+        description: "求职动机"

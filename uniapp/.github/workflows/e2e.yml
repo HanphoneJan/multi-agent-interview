@@ -1,0 +1,75 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'uniapp/**'
+      - 'fastapi/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'uniapp/**'
+      - 'fastapi/**'
+
+jobs:
+  e2e-tests:
+    name: Run E2E Tests
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./uniapp
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './uniapp/package-lock.json'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps chromium
+
+    - name: Run FastAPI backend (for E2E tests)
+      working-directory: ./fastapi
+      env:
+        DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
+        JWT_SECRET_KEY: test-secret-key
+        JWT_ACCESS_TOKEN_EXPIRE_MINUTES: 30
+        DEBUG: true
+      run: |
+        pip install -r requirements.txt
+        python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+        sleep 10
+
+    - name: Run E2E tests
+      env:
+        TEST_BASE_URL: http://localhost:3000
+        TEST_API_URL: http://localhost:8000/api/v1
+      run: npm run test:e2e
+
+    - name: Upload Playwright report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: playwright-report
+        path: uniapp/playwright-report/
+        retention-days: 30
+
+    - name: Upload test results
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: |
+          uniapp/test-results/
+          uniapp/playwright-report/
+        retention-days: 7

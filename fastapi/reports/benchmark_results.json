@@ -1,0 +1,106 @@
+{
+  "timestamp": "2026-02-28T17:43:42.412159",
+  "single_evaluation": {
+    "tested": 10,
+    "mae": 0.04900000000000003,
+    "max_error": 0.09999999999999998,
+    "avg_response_time": 7.0340897798538204,
+    "scores": [
+      {
+        "id": "A001",
+        "category": "technical_excellent",
+        "expected": 0.85,
+        "actual": 0.92,
+        "error": 0.07000000000000006
+      },
+      {
+        "id": "A002",
+        "category": "technical_poor",
+        "expected": 0.15,
+        "actual": 0.15,
+        "error": 0.0
+      },
+      {
+        "id": "A003",
+        "category": "technical_good",
+        "expected": 0.7,
+        "actual": 0.78,
+        "error": 0.08000000000000007
+      },
+      {
+        "id": "A004",
+        "category": "technical_average",
+        "expected": 0.45,
+        "actual": 0.45,
+        "error": 0.0
+      },
+      {
+        "id": "A005",
+        "category": "behavioral_excellent",
+        "expected": 0.88,
+        "actual": 0.87,
+        "error": 0.010000000000000009
+      },
+      {
+        "id": "A006",
+        "category": "behavioral_poor",
+        "expected": 0.2,
+        "actual": 0.15,
+        "error": 0.05000000000000002
+      },
+      {
+        "id": "A007",
+        "category": "behavioral_good",
+        "expected": 0.75,
+        "actual": 0.72,
+        "error": 0.030000000000000027
+      },
+      {
+        "id": "A008",
+        "category": "problem_solving_excellent",
+        "expected": 0.9,
+        "actual": 0.82,
+        "error": 0.08000000000000007
+      },
+      {
+        "id": "A009",
+        "category": "problem_solving_average",
+        "expected": 0.55,
+        "actual": 0.65,
+        "error": 0.09999999999999998
+      },
+      {
+        "id": "A010",
+        "category": "communication_excellent",
+        "expected": 0.85,
+        "actual": 0.92,
+        "error": 0.07000000000000006
+      }
+    ]
+  },
+  "report_generation": {
+    "tested": 2,
+    "mae": 12.5,
+    "results": [
+      {
+        "session_id": "S001",
+        "expected": 82,
+        "actual": 86,
+        "error": 4
+      },
+      {
+        "session_id": "S002",
+        "expected": 65,
+        "actual": 86,
+        "error": 21
+      }
+    ]
+  },
+  "integration": {},
+  "summary": {},
+  "boundary": {
+    "passed": 5,
+    "failed": 0,
+    "pass_rate": 1.0
+  }
+}

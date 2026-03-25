@@ -1,0 +1,97 @@
+# Production deployment stack
+# Usage:
+#   docker compose -f deploy/docker-compose.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ai_interview
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  fastapi:
+    build:
+      context: ../fastapi
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/ai_interview
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      QWEN_API_KEY: ${QWEN_API_KEY:-}
+      ALIYUN_ACCESS_KEY: ${ALIYUN_ACCESS_KEY:-placeholder}
+      ALIYUN_SECRET_KEY: ${ALIYUN_SECRET_KEY:-placeholder}
+      ALIYUN_OSS_BUCKET: ${ALIYUN_OSS_BUCKET:-placeholder}
+      ALIYUN_ASR_APPKEY: ${ALIYUN_ASR_APPKEY:-placeholder}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "
+        python migrate_db.py &&
+        python scripts/seed_db.py &&
+        uvicorn app.main:app --host 0.0.0.0 --port 8000
+      "
+
+  celery_worker:
+    build:
+      context: ../fastapi
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/ai_interview
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+      QWEN_API_KEY: ${QWEN_API_KEY:-}
+      ALIYUN_ACCESS_KEY: ${ALIYUN_ACCESS_KEY:-placeholder}
+      ALIYUN_SECRET_KEY: ${ALIYUN_SECRET_KEY:-placeholder}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A app.tasks.celery_app worker -l info -Q celery,default
+
+  celery_beat:
+    build:
+      context: ../fastapi
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL: postgresql+asyncpg://postgres:password@postgres:5432/ai_interview
+      REDIS_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/1
+      CELERY_RESULT_BACKEND: redis://redis:6379/2
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-change-me-in-production}
+    depends_on:
+      - redis
+      - celery_worker
+    command: celery -A app.tasks.celery_app beat -l info
+
+volumes:
+  postgres_data:

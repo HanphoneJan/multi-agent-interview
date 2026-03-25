@@ -1,0 +1,22 @@
+{
+  "hooks": {
+    "SessionStart": {
+      "command": "node .claude/hooks/session-start.js"
+    },
+    "UserPromptSubmit": {
+      "command": "node .claude/hooks/skill-forced-eval.js"
+    },
+    "PreToolUse": {
+      "command": "node .claude/hooks/pre-tool-use.js"
+    },
+    "Stop": {
+      "command": "node .claude/hooks/stop.js"
+    },
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "command": "python .claude/hooks/error-detector.py"
+      }
+    ]
+  }
+}

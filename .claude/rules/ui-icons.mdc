@@ -1,0 +1,12 @@
+---
+description: 前端 UI 图标约定，优先使用图标库而非 emoji
+globs: code/web/**/*.{vue,ts,tsx}, preview/**/*.{html,js,css}
+alwaysApply: false
+---
+
+# 图标与 UI 约定
+
+- **尽量不使用 emoji 图标**，改用项目图标库中的图标。
+- 前端 `code/web` 使用 Ant Design Vue 时，优先使用 `@ant-design/icons-vue` 中的图标组件。
+- 若项目已接入其他图标库（如 iconfont、Heroicons 等），按项目现有约定选用图标。
+- 仅在文案、说明性内容中必要时可保留少量 emoji；按钮、标签、状态指示等界面元素应使用图标库图标。

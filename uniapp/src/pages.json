@@ -1,0 +1,281 @@
+{
+  "pages": [
+
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "欢迎页",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+          {
+      "path": "pages/interview/interviewer",
+      "style": {
+        "navigationBarTitleText": "定制面试官",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarTitleText": "主页",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/learn/ready",
+      "style": {
+        "navigationBarTitleText": "面试准备",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/learn/personalized",
+      "style": {
+        "navigationBarTitleText": "针对性学习",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+        {
+      "path": "pages/learn/resources",
+      "style": {
+        "navigationBarTitleText": "面试资料库",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+            {
+      "path": "pages/learn/single-resource",
+      "style": {
+        "navigationBarTitleText": "面试资料",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+            {
+      "path": "pages/learn/career",
+      "style": {
+        "navigationBarTitleText": "职业规划",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/report/report",
+      "style": {
+        "navigationBarTitleText": "面试反馈",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/report/reports",
+      "style": {
+        "navigationBarTitleText": "评估报告列表",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/history/history",
+      "style": {
+        "navigationBarTitleText": "面试历史",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/profile/profile",
+      "style": {
+        "navigationBarTitleText": "个人中心",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+        {
+      "path": "pages/profile/edit",
+      "style": {
+        "navigationBarTitleText": "个人信息编辑",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/register/register",
+      "style": {
+        "navigationBarTitleText": "注册",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/agreement/agreement",
+      "style": {
+        "navigationBarTitleText": "用户协议",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/privacy/privacy",
+      "style": {
+        "navigationBarTitleText": "隐私政策",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/forget-password/forget-password",
+      "style": {
+        "navigationBarTitleText": "忘记密码",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/interview/select",
+      "style": {
+        "navigationBarTitleText": "选择面试类型",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/scenario/custom",
+      "style": {
+        "navigationBarTitleText": "自定义面试场景",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/interview/index",
+      "style": {
+        "navigationBarTitleText": "面试入口",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/interview/realtime/realtime",
+      "style": {
+        "navigationBarTitleText": "AI实时面试",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/interview/classic/classic",
+      "style": {
+        "navigationBarTitleText": "传统面试",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/interview/interview",
+      "style": {
+        "navigationBarTitleText": "AI面试",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+    {
+      "path": "pages/interview/interview-realtime",
+      "style": {
+        "navigationBarTitleText": "AI实时音视频面试",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    },
+
+    {
+      "path": "pages/resume/resume",
+      "style": {
+        "navigationBarTitleText": "简历解析",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": false
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "AI面试助手",
+    "navigationBarBackgroundColor": "#ffffff",
+    "backgroundColor": "#F8F8F8",
+    "backgroundColorTop": "#F8F8F8",
+    "backgroundColorBottom": "#F8F8F8",
+    "style": "v3",
+    "navigationStyle": "custom",
+    "app-plus": {
+      "titleNView": false
+    },
+    "h5": {
+      "titleNView": false,
+      "usingComponents": {}
+    }
+  },
+  "tabBar": {
+    "color": "#7d8db3",
+    "selectedColor": "#2a7bf6",
+    "borderStyle": "white",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "iconPath": "static/tabbar/interview.png",
+        "selectedIconPath": "/static/tabbar/interview.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/learn/ready",
+        "iconPath": "static/tabbar/ready.png",
+        "selectedIconPath": "/static/tabbar/ready.png",
+        "text": "面试准备"
+      },
+      {
+        "pagePath": "pages/report/report",
+        "iconPath": "static/tabbar/report.png",
+        "selectedIconPath": "/static/tabbar/report.png",
+        "text": "面试反馈"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "iconPath": "static/tabbar/user.png",
+        "selectedIconPath": "/static/tabbar/user.png",
+        "text": "我的"
+      }
+    ],
+    "position": "bottom"
+  },
+  "condition": {
+    "current": 0,
+    "list": [
+      {
+        "name": "PC",
+        "path": "pages/home/home",
+        "query": "",
+        "launchMode": "default"
+      }
+    ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+    }
+  }
+}

@@ -1,0 +1,125 @@
+---
+description: 测试代码必须优先使用真实API和真实Agent，Worker测试必须启动真实Worker进程。
+alwaysApply: true
+---
+
+# 测试代码编写规范
+
+## 核心原则：真实优先
+
+**除非有明确理由，否则必须使用真实API和真实服务进行测试。**
+
+## 一、API测试方式选择
+
+| 测试目标 | 推荐方式 | 是否必须真实API |
+|---------|---------|----------------|
+| API契约验证 | FastAPITestBase | 否，Mock可接受 |
+| 数据库交互 | FastAPITestBase | 否，Mock可接受 |
+| 外部服务集成 | **LiveAPITestBase** | **是** |
+| 定时任务(Worker) | **真实Worker+API** | **是** |
+| 报告生成与推送 | **真实API+真实Worker** | **是** |
+| 验收测试 | **LiveAPITestBase** | **是** |
+| Agent功能测试 | **LiveAPITestBase** | **是** |
+
+## 二、Worker测试强制要求
+
+当测试涉及Worker（report-worker, watcher-worker, etl-worker）时：
+
+### 必须检查清单
+- [ ] Worker进程是否已启动？`uv run run-report-worker`
+- [ ] 是否等待了足够执行时间？（通常1-5分钟）
+- [ ] 是否验证了真实外部效果？（企业微信/邮件接收）
+- [ ] 测试完成后是否清理了数据？
+
+### 示例代码
+```python
+# 正确：真实Worker测试
+class TestReportWorker(LiveAPITestBase):
+    def test_full_flow(self):
+        # 1. 创建订阅
+        sub = self.api_post("/api/v1/reports/subscriptions", {...})
+
+        # 2. 等待Worker执行（必须真实等待）
+        import time
+        time.sleep(300)  # 5分钟
+
+        # 3. 验证报告生成
+        reports = self.api_get("/api/v1/reports/instances")
+        self.assert_success(reports)
+
+# 错误：Mock Worker测试（除非特殊情况）
+class TestReportWorker(FastAPITestBase):
+    def test_worker(self):
+        # Worker不会被真实调用，仅验证API响应
+        pass
+```
+
+## 三、Agent测试强制要求
+
+当测试Agent系统（Supervisor + Query Agent / Analyst Agent / Watcher Agent）时：
+
+### 必须检查清单
+- [ ] 是否通过真实API调用？`/api/v1/chat/stream`
+- [ ] 是否验证了完整交互流程？（thinking → tool_call → tool_result → content）
+- [ ] 是否验证了真实Agent决策？（路由到正确的Specialist）
+- [ ] 复杂场景是否使用了流式API测试？
+
+### 示例代码
+```python
+# 正确：真实Agent测试
+class TestRealAgent(LiveAPITestBase):
+    def test_query_agent(self):
+        blocks = []
+        def collect(data):
+            if data.get("type") == "block":
+                blocks.append(data.get("block_type"))
+
+        # 使用真实Agent处理
+        self.api_stream("/api/v1/chat/stream",
+            json_body={"message": "查询昨日DAU"},
+            callback=collect
+        )
+
+        # 验证真实Agent行为
+        assert "tool_call" in blocks
+        assert "tool_result" in blocks
+```
+
+## 四、何时允许使用Mock
+
+仅在以下场景使用 FastAPITestBase（Mock方式）：
+
+1. **单元测试** - 测试单个函数/类，不涉及外部依赖
+2. **CI环境** - 无法保证外部服务可用
+3. **快速反馈** - 开发阶段快速验证业务逻辑
+4. **并行测试** - 避免数据冲突（但优先使用唯一ID隔离）
+
+## 五、测试文件命名规范
+
+```
+tests/
+├── unit/                          # 单元测试（FastAPITestBase）
+│   └── test_service_logic.py
+├── integration/                   # 集成测试（FastAPITestBase）
+│   └── test_api_contracts.py
+├── e2e/                          # 端到端测试（LiveAPITestBase）
+│   └── test_real_workflow.py
+└── scripts/                      # 真实服务测试脚本
+    ├── test_report_worker_push.py
+    └── test_full_report_flow.py
+```
+
+## 六、常见错误
+
+| 错误 | 说明 | 修正 |
+|-----|------|------|
+| 用FastAPITestBase测试Worker | Worker不会被调度 | 使用LiveAPITestBase并启动真实Worker |
+| 用Mock测试Agent | 无法验证真实AI行为 | 使用真实API调用 |
+| 不等待Worker执行 | 测试在Worker执行前结束 | 添加time.sleep(300)或轮询检查 |
+| 不验证外部效果 | 无法确认推送成功 | 验证企业微信/邮件接收 |
+
+## 七、参考文档
+
+- 完整测试指南：`code/server/docs/AI_TESTING_GUIDE.md`
+- 测试基类：`tests/utils/test_base.py`
+- API客户端：`tests/utils/api_client.py`

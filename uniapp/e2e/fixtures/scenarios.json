@@ -1,0 +1,28 @@
+{
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "Java后端开发",
+      "technology_field": "Java",
+      "description": "Java后端开发工程师面试场景，涵盖Spring Boot、数据库、微服务等内容"
+    },
+    {
+      "id": 2,
+      "name": "Python后端开发",
+      "technology_field": "Python",
+      "description": "Python后端开发工程师面试场景，涵盖Django、FastAPI、数据处理等内容"
+    },
+    {
+      "id": 3,
+      "name": "前端开发",
+      "technology_field": "JavaScript",
+      "description": "前端开发工程师面试场景，涵盖Vue、React、HTML/CSS等内容"
+    },
+    {
+      "id": 4,
+      "name": "算法工程师",
+      "technology_field": "Algorithm",
+      "description": "算法工程师面试场景，涵盖数据结构、算法设计、机器学习等内容"
+    }
+  ]
+}

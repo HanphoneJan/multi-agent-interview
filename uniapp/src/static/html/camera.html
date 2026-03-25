@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI面试助手</title>
+  <script src="./taiwind.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+  <link href="https://hanphone.top/ai-interview/html/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#2196F3',
+            secondary: '#1976D2',
+            success: '#28a745',
+            danger: '#dc3545',
+            warning: '#ffc107',
+            info: '#17a2b8',
+            light: '#f8f9fa',
+            dark: '#343a40',
+            gray: {
+              100: '#f8f9fa',
+              200: '#e9ecef',
+              300: '#dee2e6',
+              400: '#ced4da',
+              500: '#adb5bd',
+              600: '#6c757d',
+              700: '#495057',
+              800: '#343a40',
+              900: '#212529',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .pulse-animation {
+        animation: pulse 1.5s infinite;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .typing-animation::after {
+        content: '|';
+        animation: blink 1s infinite;
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+    }
+  </style>
+
+  <style>
+    body {
+      height: 100vh;
+      background: #f8f9fa;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .timer-animation {
+      transition: all 0.3s ease;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    /* 自定义动画 */
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 平滑滚动 */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* 设备按钮状态变化 */
+    .device-btn {
+      transition: all 0.3s ease;
+    }
+
+    .device-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .device-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* 回答框聚焦效果 */
+    textarea:focus {
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.25);
+    }
+
+    /* 方形按钮样式 */
+    .square-btn {
+      border-radius: 0.5rem !important;
+      width: 120px !important;
+      height: 40px !important;
+    }
+
+    .square-btn:active {
+      transform: scale(0.95);
+    }
+
+    .square-btn-primary {
+      background-color: #2196F3;
+      color: white;
+    }
+
+    .square-btn-primary:hover {
+      background-color: #1976D2;
+    }
+
+    .square-btn-danger {
+      background-color: #dc3545;
+      color: white;
+    }
+
+    .square-btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    .square-btn-gray {
+      background-color: #6c757d;
+      color: white;
+    }
+
+    .square-btn-gray:hover {
+      background-color: #5a6268;
+    }
+
+    .square-btn-warning {
+      background-color: #ffc107;
+      color: white;
+    }
+
+    .square-btn-warning:hover {
+      background-color: #e0a800;
+    }
+
+    /* 聊天消息样式 - ChatGPT/DeepSeek 风格 */
+    .chat-message {
+      margin-bottom: 1.5rem;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .chat-message-wrap {
+      display: flex;
+      gap: 12px;
+      max-width: 100%;
+    }
+
+    /* AI 消息 - 左侧对齐 */
+    .chat-message-question .chat-message-wrap {
+      flex-direction: row;
+    }
+
+    /* 用户消息 - 右侧对齐 */
+    .chat-message-answer .chat-message-wrap {
+      flex-direction: row-reverse;
+    }
+
+    .chat-bubble {
+      padding: 14px 18px;
+      border-radius: 12px;
+      position: relative;
+      word-wrap: break-word;
+      max-width: 80%;
+      line-height: 1.6;
+    }
+
+    /* AI 消息气泡 - 浅色背景 */
+    .chat-bubble-question {
+      background-color: #f7f7f8;
+      border: 1px solid #e5e5e5;
+      color: #1e293b;
+    }
+
+    /* 用户消息气泡 - 主色背景 */
+    .chat-bubble-answer {
+      background: linear-gradient(135deg, #3964fe 0%, #1e40af 100%);
+      color: white;
+      border: none;
+    }
+
+    /* 用户消息中的 Markdown 样式调整 */
+    .chat-bubble-answer .markdown-content strong {
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    .chat-bubble-answer .markdown-content code {
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    .chat-time {
+      font-size: 0.75rem;
+      color: #64748b;
+      margin-top: 0.5rem;
+      text-align: center;
+    }
+
+    /* 消息操作按钮 */
+    .chat-message-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      padding-top: 8px;
+    }
+
+    .chat-message:hover .chat-message-actions {
+      opacity: 1;
+    }
+
+    /* 消息容器 - 确保最后一条消息不被遮挡 */
+    #conversation-container {
+      padding-bottom: 80px;
+    }
+
+    .chat-action-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .chat-action-btn:hover {
+      background: #f1f5f9;
+      color: #3964fe;
+    }
+
+    /* 按住说话按钮样式 */
+    .hold-to-talk-btn {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hold-to-talk-btn:active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.3);
+      animation: pulse 1.5s infinite;
+    }
+
+    /* Markdown 渲染样式 */
+    .markdown-content {
+      line-height: 1.6;
+    }
+
+    .markdown-content h1,
+    .markdown-content h2,
+    .markdown-content h3,
+    .markdown-content h4 {
+      margin: 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .markdown-content h1 { font-size: 1.25rem; }
+    .markdown-content h2 { font-size: 1.125rem; }
+    .markdown-content h3 { font-size: 1rem; }
+
+    .markdown-content p {
+      margin: 0.5rem 0;
+    }
+
+    .markdown-content ul,
+    .markdown-content ol {
+      margin: 0.5rem 0;
+      padding-left: 1.5rem;
+    }
+
+    .markdown-content li {
+      margin: 0.25rem 0;
+    }
+
+    .markdown-content code {
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 0.125rem 0.375rem;
+      border-radius: 0.25rem;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 0.875em;
+    }
+
+    .markdown-content pre {
+      background-color: #1e293b;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      overflow-x: auto;
+      margin: 0.5rem 0;
+    }
+
+    .markdown-content pre code {
+      background-color: transparent;
+      color: inherit;
+      padding: 0;
+    }
+
+    .markdown-content blockquote {
+      border-left: 3px solid #2196F3;
+      padding-left: 1rem;
+      margin: 0.5rem 0;
+      color: #64748b;
+    }
+
+    .markdown-content strong {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .markdown-content a {
+      color: #2196F3;
+      text-decoration: underline;
+    }
+
+    /* 流式消息样式 */
+    .streaming-content {
+      min-height: 1.5em;
+    }
+
+    /* 思考中动画 - 三个跳动点 */
+    .chat-message-loading-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      padding: 4px 0;
+    }
+
+    .chat-message-loading-text {
+      font-size: 14px;
+    }
+
+    .chat-message-loading-dots {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+    }
+
+    .chat-message-loading-dots span {
+      width: 6px;
+      height: 6px;
+      background-color: #3964fe;
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+
+    .chat-message-loading-dots span:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .chat-message-loading-dots span:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    @keyframes bounce {
+      0%, 80%, 100% {
+        transform: scale(0);
+        opacity: 0.5;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* 打字光标动画 */
+    .chat-message-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1.2em;
+      background-color: #3964fe;
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: cursorBlink 1s infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%, 50% {
+        opacity: 1;
+      }
+      51%, 100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-100 font-sans">
+  <div id="app" class="h-full flex flex-col">
+    <!-- 顶部信息栏 -->
+    <header class="bg-white border-b border-gray-200 py-4 px-6 shadow-sm flex items-center justify-between">
+      <div class="flex items-center">
+        <h1 class="text-2xl font-bold text-gray-900">AI面试助手</h1>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <div class="flex items-center gap-2">
+          <i class="fa fa-link text-lg" :class="{'text-primary': wsConnected, 'text-gray-400': !wsConnected}"></i>
+          <span class="text-gray-600 text-lg" :class="{'text-primary': wsConnected}">{{ wsConnected ? '已连接' : '未连接'
+            }}</span>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <i class="fa fa-clock-o text-gray-600 text-lg"></i>
+          <span class="text-gray-600 font-medium text-lg timer-animation">面试时长：{{ formattedTime }}</span>
+        </div>
+
+        <!-- 面试控制按钮组 -->
+        <div class="flex items-center gap-2">
+          <!-- 暂停按钮 -->
+          <button v-if="wsConnected && sessionStatus === 'in_progress'"
+            class="square-btn square-btn-warning flex items-center justify-center transition-all duration-300 device-btn"
+            @click="handlePause"
+            title="暂停面试"
+          >
+            <i class="fa fa-pause text-white text-lg"></i>
+          </button>
+
+          <!-- 恢复按钮 -->
+          <button v-if="wsConnected && sessionStatus === 'paused'"
+            class="square-btn square-btn-primary flex items-center justify-center transition-all duration-300 device-btn"
+            @click="handleResume"
+            title="恢复面试"
+          >
+            <i class="fa fa-play text-white text-lg"></i>
+          </button>
+
+          <!-- 结束面试按钮 -->
+          <button v-if="wsConnected"
+            class="square-btn square-btn-danger flex items-center justify-center transition-all duration-300 device-btn"
+            @click="handleEnd"
+            :disabled="endingInterview"
+            title="结束面试"
+          >
+            <i v-if="!endingInterview" class="fa fa-check text-white text-xl"></i>
+            <i v-else class="fa fa-spinner fa-spin text-white text-xl"></i>
+          </button>
+
+          <!-- 取消按钮 (未连接但有sessionId时显示) -->
+          <button v-if="!wsConnected && (user.session_id || user.sessionId)"
+            class="square-btn square-btn-danger flex items-center justify-center transition-all duration-300 device-btn"
+            @click="handleCancel"
+            title="取消面试"
+          >
+            <i class="fa fa-times text-white text-xl"></i>
+          </button>
+
+          <!-- 开始面试按钮 -->
+          <button v-if="!wsConnected && !(user.session_id || user.sessionId)"
+            class="square-btn flex items-center justify-center transition-all duration-300 device-btn"
+            :class="{
+              'square-btn-primary': !wsConnecting,
+              'square-btn-gray': wsConnecting
+            }"
+            @click="toggleInterview"
+            :disabled="wsConnecting"
+            title="开始面试"
+          >
+            <i v-if="!wsConnecting" class="fa fa-play text-white text-xl"></i>
+            <i v-else class="fa fa-spinner fa-spin text-white text-xl"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden p-5 gap-5">
+      <!-- 左侧：视频预览、个人信息、面试信息合并栏 -->
+      <div class="w-full lg:w-72 flex flex-col gap-4">
+        <!-- 视频预览区 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+          <div class="p-3 bg-gray-50 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-800">视频预览</h3>
+          </div>
+          <div class="w-full bg-black">
+            <video v-if="isCameraOn" ref="h5VideoRef" class="w-full aspect-video object-cover" autoplay
+              playsinline></video>
+            <div v-else class="w-full aspect-video flex flex-col items-center justify-center bg-gray-800">
+              <i class="fa fa-video-camera text-gray-400 text-4xl mb-2"></i>
+              <span class="text-gray-400 text-sm">摄像头已关闭</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 用户信息显示区域 -->
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <h3 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-200">个人信息</h3>
+          <div class="space-y-3">
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa fa-user text-primary text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-xs text-gray-600">姓名</p>
+                <p class="font-medium text-sm" id="name-display">{{ user.name || '未登录' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa fa-transgender text-primary text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-xs text-gray-600">性别</p>
+                <p class="font-medium text-sm" id="gender-display">{{ user.gender || '未设置' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa fa-graduation-cap text-primary text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-xs text-gray-600">学校</p>
+                <p class="font-medium text-sm" id="university-display">{{ user.university || '未设置' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa fa-book text-primary text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-xs text-gray-600">专业</p>
+                <p class="font-medium text-sm" id="major-display">{{ user.major || '未设置' }}</p>
+              </div>
+            </div>
+            <div class="flex items-center">
+              <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <i class="fa fa-envira text-primary text-sm"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-xs text-gray-600">现阶段</p>
+                <p class="font-medium text-sm" id="learing-stage-display">{{ user.learning_stage || '未设置' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 面试信息区域 -->
+        <div class="bg-white rounded-xl shadow-sm p-4 flex-1">
+          <h3 class="text-lg font-semibold text-gray-800 mb-3 pb-2 border-b border-gray-200">面试信息</h3>
+          <div class="space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600 text-sm">面试状态</span>
+              <span class="px-2 py-1 rounded-full text-xs font-medium" :class="{
+                      'bg-green-100 text-green-800': sessionStatus === 'in_progress',
+                      'bg-yellow-100 text-yellow-800': sessionStatus === 'paused' || wsConnecting || endingInterview,
+                      'bg-blue-100 text-blue-800': sessionStatus === 'completed',
+                      'bg-red-100 text-red-800': sessionStatus === 'cancelled',
+                      'bg-gray-100 text-gray-800': !sessionStatus
+                    }">
+                {{endingInterview ? '结束中...' : wsConnected ? '进行中' : wsConnecting ? '连接中...' : '未开始' }}
+              </span>
+            </div>
+
+            <div class="w-full bg-gray-100 rounded-full h-2">
+              <div class="bg-primary h-2 rounded-full" :style="{width: wsConnected ? '100%' : '0%'}"></div>
+            </div>
+
+            <div class="pt-2 border-t border-gray-100 space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 text-sm">已回答问题</span>
+                <span class="font-medium text-gray-800 text-sm">{{ conversationHistory.filter(item => item.type ===
+                  'answer').length }}</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-gray-600 text-sm">当前问题</span>
+                <span class="font-medium text-gray-800 text-sm">{{ currentQuestion ? '1个待回答' : '暂无' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 中间：核心内容区（问题与回答） -->
+      <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- 合并后的聊天区域 -->
+        <div class="flex-1 bg-white rounded-xl shadow-sm overflow-hidden mb-5 flex flex-col">
+          <div class="p-5 border-b border-gray-100 flex-shrink-0">
+            <h3 class="text-xl font-semibold text-gray-800">面试对话</h3>
+          </div>
+          <div class="p-5 overflow-y-auto scrollbar-hide flex flex-col flex-1" id="conversation-container" style="scroll-behavior: smooth;">
+            <!-- 加载状态 -->
+            <div v-if="!currentQuestion && conversationHistory.length === 0 && pageInitialized"
+              class="flex flex-col items-center justify-center h-full">
+              <div class="text-center">
+                <i class="fa fa-comments-o text-4xl text-gray-300 mb-4"></i>
+                <p class="text-gray-500 text-xl typing-animation">正在准备问题...</p>
+              </div>
+            </div>
+
+            <!-- 合并后的聊天消息 -->
+            <template v-for="(item, index) in conversationHistory" :key="index">
+              <div class="chat-message"
+                :class="item.type === 'question' ? 'chat-message-question' : 'chat-message-answer'">
+                <div class="chat-message-wrap">
+                  <div class="chat-bubble"
+                    :class="item.type === 'question' ? 'chat-bubble-question' : 'chat-bubble-answer'">
+                    <!-- 问题使用 Markdown 渲染 -->
+                    <div v-if="item.type === 'question' && item.isMarkdown" class="markdown-content"
+                      v-html="renderMarkdown(item.content)"></div>
+                    <p v-else class="text-base">{{ item.content }}</p>
+                  </div>
+                  <!-- 操作按钮 -->
+                  <div class="chat-message-actions">
+                    <button class="chat-action-btn" @click="copyMessageContent(item.content)" title="复制">
+                      <i class="fa fa-copy"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+
+            <!-- 当前问题（如果存在） -->
+            <div v-if="currentQuestion" class="chat-message chat-message-question fade-in">
+              <div class="chat-message-wrap">
+                <div class="chat-bubble chat-bubble-question">
+                  <!-- 加载中状态 -->
+                  <div v-if="currentQuestion.isStreaming && !currentQuestion.content" class="chat-message-loading-wrap">
+                    <span class="chat-message-loading-text">思考中</span>
+                    <span class="chat-message-loading-dots">
+                      <span></span><span></span><span></span>
+                    </span>
+                  </div>
+                  <!-- 使用 Markdown 渲染，流式内容 -->
+                  <template v-else>
+                    <div v-if="currentQuestion.isMarkdown" class="markdown-content streaming-content"
+                      v-html="renderMarkdown(currentQuestion.content)"></div>
+                    <p v-else class="text-base">{{ currentQuestion.content }}</p>
+                    <!-- 流式光标指示器 -->
+                    <span v-if="currentQuestion.isStreaming" class="chat-message-cursor"></span>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 回答输入区 -->
+        <div class="bg-white rounded-xl shadow-sm p-5 flex-shrink-0">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">我的回答</h3>
+            <span class="text-gray-500 text-sm">{{ textAnswer.length }}/500</span>
+          </div>
+
+          <textarea v-model="textAnswer"
+            class="w-full min-h-[100px] p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 text-base leading-relaxed resize-none focus:outline-none focus:border-primary focus:bg-white transition-all duration-300"
+            placeholder="请输入您的回答..." maxlength="500" :disabled="!wsConnected"
+            @keydown.enter.exact.prevent="sendTextAnswer()"></textarea>
+
+          <div class="flex items-center gap-4 mt-4">
+            <div class="flex gap-3">
+              <button
+                class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center transition-all duration-300 device-btn"
+                :class="{'bg-primary': isCameraOn, 'bg-gray-400': !isCameraOn}" @click="toggleCamera">
+                <i class="fa fa-video-camera text-white text-base"></i>
+              </button>
+              <button
+                class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center transition-all duration-300 device-btn hold-to-talk-btn"
+                :class="{'bg-primary': isMicOn, 'bg-gray-400': !isMicOn}" @click="toggleMic">
+                <i class="fa fa-microphone text-white text-base"></i>
+              </button>
+            </div>
+
+            <button
+              class="bg-primary hover:bg-secondary text-white px-6 py-2.5 rounded-lg transition-all duration-300 ml-auto device-btn flex items-center"
+              @click="sendTextAnswer" :disabled="!textAnswer.trim() || !wsConnected"
+              :class="!textAnswer.trim() || !wsConnected ? 'opacity-70 cursor-not-allowed' : ''">
+              <i class="fa fa-paper-plane mr-2"></i>发送回答
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 错误提示区 -->
+    <div v-if="errorMessage"
+      class="fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-danger text-white px-6 py-3 rounded-lg shadow-lg z-20 fade-in">
+      <i class="fa fa-exclamation-circle mr-2"></i>{{ errorMessage }}
+    </div>
+  </div>
+
+  <script src="./vue.global.js"></script>
+  <script>
+    const { createApp, ref, computed, onMounted, onUnmounted, watch, nextTick } = Vue;
+
+    const app = createApp({
+      setup() {
+        // WebSocket 连接 - 使用FastAPI后端端点
+        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const WS_BASE_URL = isDevelopment
+          ? 'ws://localhost:8000/api/v1/ws/interview'
+          : 'wss://www.hanphone.top/api/v1/ws/interview';
+        let websocket = null;
+        const wsConnected = ref(false);
+        let reconnectTimer = null;
+        const maxReconnectAttempts = 5;
+        let reconnectAttempts = 0;
+        const wsConnecting = ref(false); // 新增连接中状态
+        // 面试状态
+        const interviewStatus = ref('面试未开启');
+        const interviewTimer = ref(0);
+        let timerInterval = null;
+        const errorMessage = ref('');
+        let imageCaptureInterval = null;
+        const endingInterview = ref(false); // 新增面试结束中状态
+
+        // 会话状态管理
+        const sessionStatus = ref(null);
+        const sessionStatusText = computed(() => {
+          const statusMap = {
+            'in_progress': '进行中',
+            'paused': '已暂停',
+            'completed': '已完成',
+            'cancelled': '已取消',
+            'pending': '待开始'
+          };
+          return statusMap[sessionStatus.value] || '未开始';
+        });
+
+        // API 配置
+        const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? 'http://localhost:8000'
+          : 'https://www.hanphone.top';
+
+        // 设备状态
+        const isCameraOn = ref(true);
+        const isMicOn = ref(false);
+        const isRecording = ref(false);
+
+        // 对话相关
+        const currentQuestion = ref(null);
+        const conversationHistory = ref([]);
+        const textAnswer = ref('');
+
+        // 流式消息相关
+        const streamingContent = ref('');
+        const isStreaming = ref(false);
+        let streamingBuffer = '';
+
+        // 媒体流和权限状态
+        const localVideoStream = ref(null);
+        const localAudioStream = ref(null);
+        const cameraPermissionGranted = ref(false);
+        const micPermissionGranted = ref(false);
+        const h5VideoRef = ref(null);
+        let audioContext = null;
+        let mediaStreamSource = null;
+        let processor = null;
+        let audioChunks = [];
+        let audioRecorder = null;
+
+        // 用户信息
+        const user = ref({});
+        const interviewerSettings =ref({});
+        const userAvatar = computed(() => {
+          if (user.value.username) {
+            return `https://hanphone.top/images/zhuxun.jpg`;
+          }
+          return 'https://hanphone.top/images/zhuxun.jpg';
+        });
+
+        // 计算属性
+        const formattedTime = computed(() => {
+          const minutes = Math.floor(interviewTimer.value / 60);
+          const seconds = interviewTimer.value % 60;
+          return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        });
+
+        // 格式化时间戳
+        const formatTime = (seconds) => {
+          const mins = Math.floor(seconds / 60);
+          const secs = seconds % 60;
+          return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        };
+
+        // 页面初始化状态
+        const pageInitialized = ref(false);
+        const waitingForUserInfo = ref(true);
+        const userInfoTimeout = ref(null);
+        const requestInterval = ref(null);
+        const userInfoReceived = ref(false);
+
+        // 显示错误信息
+        const showError = (message) => {
+          errorMessage.value = message;
+          console.error('显示错误:', message);
+
+          // 5秒后自动隐藏错误提示
+          setTimeout(() => {
+            errorMessage.value = '';
+          }, 5000);
+        };
+
+        // 用户信息接收后初始化页面
+        const initPageAfterUserInfoReceived = () => {
+          console.log('开始初始化页面，用户信息已接收');
+          interviewStatus.value = '面试未开启';
+          // 检查权限并初始化摄像头和麦克风
+          checkPermissions().then(() => {
+            if (isCameraOn.value) {
+              startH5Camera();
+            }
+          });
+        };
+
+        // 接收来自uniapp的消息
+        const receiveMessageFromUniapp = (event) => {
+          try {
+            // 检查消息来源
+            if (event.origin !== window.location.origin &&
+              !event.origin.endsWith('.yourdomain.com')) {
+              console.warn('拒绝来自未知源的消息:', event.origin);
+              return;
+            }
+
+            const message = event.data;
+            console.log('收到uniapp消息:', message);
+
+            switch (message.type) {
+              case 'userStore':
+                // 清除超时定时器
+                if (userInfoTimeout.value) {
+                  clearTimeout(userInfoTimeout.value);
+                  userInfoTimeout.value = null;
+                }
+
+                // 清除请求间隔计时器
+                if (requestInterval.value) {
+                  clearInterval(requestInterval.value);
+                  requestInterval.value = null;
+                }
+
+                user.value = message.data.userInfo;
+                interviewerSettings.value = message.data.interviewerSettings
+                console.log('接收到用户信息:', user.value);
+                console.log('接收到面试官设置：',interviewerSettings.value)
+                // 更新用户信息显示
+                const usernameDisplay = document.getElementById('username-display');
+                const universityDisplay = document.getElementById('university-display');
+                const majorDisplay = document.getElementById('major-display');
+                const learingStageDisplay = document.getElementById('learing-stage-display');
+                const nameDisplay = document.getElementById('name-display');
+                if (usernameDisplay) usernameDisplay.textContent = user.value.username || '未登录';
+                if (universityDisplay) universityDisplay.textContent = user.value.university || '未设置';
+                if (majorDisplay) majorDisplay.textContent = user.value.major || '未设置';
+                if (learingStageDisplay) learingStageDisplay.textContent = user.value.learning_stage || '未设置';
+                if (nameDisplay) nameDisplay.textContent = user.value.name || '未设置';
+
+                waitingForUserInfo.value = false;
+                userInfoReceived.value = true;
+
+                // 只有在收到用户信息后才初始化关键操作
+                if (!pageInitialized.value && user.value.isLoggedIn) {
+                  pageInitialized.value = true;
+                  initPageAfterUserInfoReceived();
+                }
+                break;
+              case 'error':
+                showError(message.data || '来自应用的错误');
+                break;
+            }
+          } catch (error) {
+            console.error('解析消息失败:', error);
+            showError('与应用通信失败，请重试');
+          }
+        };
+
+        // 向uniapp发送消息
+        const sendMessageToUniapp = (message) => {
+          console.log('发送消息到uniapp:', message);
+
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage(message, '*');
+          } else {
+            console.log('无法发送消息: 未找到父窗口');
+          }
+        };
+
+        // 请求用户信息
+        const requestUserInfo = () => {
+          // 如果已经收到用户信息，不再发送请求
+          if (userInfoReceived.value) {
+            console.log('用户信息已接收，不再发送请求');
+            return;
+          }
+
+          console.log('请求用户信息...');
+          sendMessageToUniapp({
+            type: 'requestUserInfo',
+            timestamp: Date.now()
+          });
+
+          // 设置超时处理
+          userInfoTimeout.value = setTimeout(() => {
+            if (!userInfoReceived.value) {
+              showError('获取用户信息超时，请刷新页面');
+            }
+          }, 8000);
+        };
+
+        // 切换面试状态的方法
+        const toggleInterview = () => {
+          if (!wsConnected.value) {
+            // 开始面试：建立WebSocket连接
+            if (!userInfoReceived.value) {
+              showError('请等待用户信息加载完成');
+              return;
+            }
+            connectWebSocket();
+          } else {
+            // 关闭面试：断开WebSocket连接
+            closeWebSocket(true); // 传递true表示用户主动结束
+          }
+        };
+
+        // 会话控制方法
+        const sessionControls = {
+          // 暂停面试
+          async pauseSession(sessionId) {
+            try {
+              const token = user.value.access || user.value.access_token || '';
+              const response = await fetch(`${API_BASE_URL}/api/v1/interviews/sessions/${sessionId}/pause`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+              if (!response.ok) throw new Error('暂停失败');
+              return await response.json();
+            } catch (error) {
+              console.error('暂停面试失败:', error);
+              throw error;
+            }
+          },
+
+          // 恢复面试
+          async resumeSession(sessionId) {
+            try {
+              const token = user.value.access || user.value.access_token || '';
+              const response = await fetch(`${API_BASE_URL}/api/v1/interviews/sessions/${sessionId}/resume`, {
+                method: 'PUT',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+              if (!response.ok) throw new Error('恢复失败');
+              return await response.json();
+            } catch (error) {
+              console.error('恢复面试失败:', error);
+              throw error;
+            }
+          },
+
+          // 结束面试
+          async endSession(sessionId) {
+            try {
+              const token = user.value.access || user.value.access_token || '';
+              const response = await fetch(`${API_BASE_URL}/api/v1/interviews/sessions/${sessionId}/end`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+              if (!response.ok) throw new Error('结束失败');
+              return await response.json();
+            } catch (error) {
+              console.error('结束面试失败:', error);
+              throw error;
+            }
+          },
+
+          // 取消面试
+          async cancelSession(sessionId) {
+            try {
+              const token = user.value.access || user.value.access_token || '';
+              const response = await fetch(`${API_BASE_URL}/api/v1/interviews/sessions/${sessionId}/cancel`, {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+              if (!response.ok) throw new Error('取消失败');
+              return await response.json();
+            } catch (error) {
+              console.error('取消面试失败:', error);
+              throw error;
+            }
+          }
+        };
+
+        // 暂停面试
+        const handlePause = async () => {
+          const sessionId = user.value.session_id || user.value.sessionId;
+          if (!sessionId) return;
+
+          try {
+            await sessionControls.pauseSession(sessionId);
+            sessionStatus.value = 'paused';
+            if (timerInterval) {
+              clearInterval(timerInterval);
+              timerInterval = null;
+            }
+            showError('已暂停面试');
+          } catch (error) {
+            showError('暂停失败: ' + error.message);
+          }
+        };
+
+        // 恢复面试
+        const handleResume = async () => {
+          const sessionId = user.value.session_id || user.value.sessionId;
+          if (!sessionId) return;
+
+          try {
+            await sessionControls.resumeSession(sessionId);
+            sessionStatus.value = 'in_progress';
+            startTimer();
+            showError('已恢复面试');
+          } catch (error) {
+            showError('恢复失败: ' + error.message);
+          }
+        };
+
+        // 结束面试
+        const handleEnd = async () => {
+          const sessionId = user.value.session_id || user.value.sessionId;
+          if (!sessionId) return;
+
+          if (!confirm('确定要结束当前面试吗？结束后将生成评估报告。')) return;
+
+          try {
+            endingInterview.value = true;
+            await sessionControls.endSession(sessionId);
+            sessionStatus.value = 'completed';
+            closeWebSocket();
+            // 使用新的消息协议通知 uniapp
+            sendMessageToUniapp({
+              type: 'interview:ended',
+              sessionId: sessionId,
+              action: 'navigateToReport'
+            });
+          } catch (error) {
+            showError('结束失败: ' + error.message);
+            endingInterview.value = false;
+          }
+        };
+
+        // 取消面试
+        const handleCancel = async () => {
+          const sessionId = user.value.session_id || user.value.sessionId;
+          if (!sessionId) return;
+
+          if (!confirm('确定要取消当前面试吗？取消后无法恢复。')) return;
+
+          try {
+            await sessionControls.cancelSession(sessionId);
+            sessionStatus.value = 'cancelled';
+            user.value.session_id = null;
+            user.value.sessionId = null;
+            // 使用新的消息协议通知 uniapp
+            sendMessageToUniapp({
+              type: 'interview:ended',
+              sessionId: sessionId,
+              action: 'navigateBack'
+            });
+          } catch (error) {
+            showError('取消失败: ' + error.message);
+          }
+        };
+
+
+        // WebSocket 连接管理
+        const connectWebSocket = () => {
+          try {
+            wsConnecting.value = true; // 设置为连接中状态
+            wsConnected.value = false;
+            // 如果已有连接，先关闭
+            if (websocket) {
+              websocket.close();
+            }
+
+            // 使用用户token作为认证信息
+            const token = user.value.access || user.value.access_token || '';
+            const session_id = user.value.session_id || user.value.sessionId || '';
+            console.log('尝试连接WebSocket，token:', token ? '已设置' : '未设置', 'session_id:', session_id);
+
+            // 检查必要的参数
+            if (!token || !session_id) {
+              console.error('WebSocket连接失败: 缺少token或session_id', {
+                hasToken: !!token,
+                hasSessionId: !!session_id,
+                userValue: user.value
+              });
+              showError('连接失败: 用户认证信息不完整，请重新登录');
+              wsConnecting.value = false;
+              return;
+            }
+
+            // 构建正确的WebSocket URL: /ws/interview/{session_id}?token={token}
+            const authUrl = `${WS_BASE_URL}/${session_id}?token=${encodeURIComponent(token)}`;
+            console.log('WebSocket URL:', authUrl.replace(token, '***TOKEN***'));
+
+            websocket = new WebSocket(authUrl);
+            websocket.onopen = () => {
+              console.log('WebSocket连接成功');
+              wsConnecting.value = false;
+              wsConnected.value = true;
+              interviewStatus.value = '面试进行中';
+              sessionStatus.value = 'in_progress';
+              startTimer();
+              reconnectAttempts = 0;
+
+              // 清除重连计时器
+              if (reconnectTimer) {
+                clearTimeout(reconnectTimer);
+                reconnectTimer = null;
+              }
+
+              // 发送开始面试消息，触发AI面试官发送第一个问题（H5环境）
+              sendMessage({
+                type: 'start_interview',
+                timestamp: Date.now(),
+                session_id: session_id
+              });
+
+              // 开始定时发送图片
+              startImageCapture();
+            };
+
+            websocket.onmessage = (res) => {
+              try {
+                const data = JSON.parse(res.data);
+                handleWebSocketMessage(data);
+              } catch (error) {
+                console.error('解析WebSocket消息失败:', error);
+                showError('解析消息失败，请重试');
+              }
+            };
+
+            websocket.onerror = (err) => {
+              console.error('WebSocket错误:', err);
+              wsConnected.value = false;
+              wsConnecting.value = false;
+              interviewStatus.value = '连接异常';
+              showError('WebSocket连接错误，请检查网络');
+              wsConnecting.value = false;
+              // 尝试重连
+              scheduleReconnect();
+            };
+
+            websocket.onclose = (event) => {
+              console.log('WebSocket连接关闭，代码:', event.code, '原因:', event.reason);
+              wsConnected.value = false;
+              wsConnecting.value = false;
+              interviewStatus.value = '面试未开启';
+              stopTimer();
+              stopImageCapture();
+              stopRecording();
+
+              // 非手动关闭时尝试重连
+              if (event.code !== 1000) { // 1000表示正常关闭
+                showError('与服务器的连接已断开');
+                scheduleReconnect();
+              }
+            };
+          } catch (error) {
+            console.error('创建WebSocket连接失败:', error);
+            showError('创建WebSocket连接失败');
+
+            // 尝试重连
+            scheduleReconnect();
+          }
+        };
+
+        // 安排重连
+        const scheduleReconnect = () => {
+          if (reconnectAttempts >= maxReconnectAttempts) {
+            console.error('达到最大重连次数，停止重连');
+            showError('连接失败，请刷新页面重试');
+            return;
+          }
+
+          reconnectAttempts++;
+          const delay = 2 ** reconnectAttempts * 1000; // 指数退避算法
+          console.log(`尝试重连 ${reconnectAttempts}/${maxReconnectAttempts}，${delay / 1000}秒后`);
+
+          reconnectTimer = setTimeout(() => {
+            console.log('尝试重连WebSocket...');
+            connectWebSocket();
+          }, delay);
+        };
+
+        // 关闭WebSocket连接
+        const closeWebSocket = (userInitiated = false) => {
+          // 清除重连计时器
+          if (reconnectTimer) {
+            clearTimeout(reconnectTimer);
+            reconnectTimer = null;
+          }
+
+          if (websocket) {
+            if (userInitiated && wsConnected.value) {
+              // 如果是用户主动结束，发送结束消息
+              endingInterview.value = true;
+              sendMessage({
+                type: 'end',
+                timestamp: Date.now(),
+                reason: 'user_requested'
+              });
+
+              return;
+            }
+
+            websocket.close();
+            websocket = null;
+          }
+
+          wsConnected.value = false;
+          wsConnecting.value = false;
+          endingInterview.value = false; // 重置结束中状态
+          interviewStatus.value = '面试未开启';
+          stopTimer();
+          stopImageCapture();
+          stopRecording();
+
+          if (userInitiated) {
+            showError('面试已结束');
+          }
+        };
+
+        // 处理WebSocket消息
+        const handleWebSocketMessage = (data) => {
+          console.log('收到WebSocket消息:', data);
+          console.log('当前问题类型:', data.type);
+          switch (data.type) {
+            case 'question':
+              // 将当前问题添加到历史记录
+              if (currentQuestion.value) {
+                conversationHistory.value = [...conversationHistory.value, {
+                  ...currentQuestion.value,
+                  type: 'question'
+                }];
+              }
+
+              // 更新当前问题
+              currentQuestion.value = {
+                content: data.question,
+                timestamp: interviewTimer.value,
+                audioData: data.audio_data, // 保存原始音频数据
+                isMarkdown: true
+              };
+
+              // 处理音频数据
+              if (data.audio_data) {
+                try {
+                  // 尝试直接播放base64音频
+                  playBase64Audio(data.audio_data);
+                } catch (error) {
+                  console.error('播放音频失败:', error);
+                  showError('音频播放失败，请点击重试');
+                }
+              }
+
+              // 滚动到底部
+              scrollToBottom();
+              break;
+
+            case 'user_message':
+              // 用户消息确认，添加到对话历史
+              conversationHistory.value = [...conversationHistory.value, {
+                type: 'answer',
+                content: data.content,
+                timestamp: interviewTimer.value
+              }];
+              scrollToBottom();
+              break;
+
+            case 'stream_start':
+              // 开始流式响应
+              isStreaming.value = true;
+              streamingContent.value = '';
+              streamingBuffer = '';
+              // 如果有当前问题，先保存到历史
+              if (currentQuestion.value) {
+                conversationHistory.value = [...conversationHistory.value, {
+                  ...currentQuestion.value,
+                  type: 'question'
+                }];
+                currentQuestion.value = null;
+              }
+              // 创建新的流式消息
+              currentQuestion.value = {
+                content: '',
+                timestamp: interviewTimer.value,
+                isStreaming: true,
+                isMarkdown: true
+              };
+              scrollToBottom();
+              break;
+
+            case 'stream_chunk':
+              // 接收流式块
+              if (data.chunk) {
+                streamingBuffer += data.chunk;
+                streamingContent.value = streamingBuffer;
+                if (currentQuestion.value) {
+                  currentQuestion.value.content = streamingBuffer;
+                }
+                // 使用 nextTick 确保 DOM 更新后滚动
+                nextTick(() => {
+                  scrollToBottom();
+                });
+              }
+              break;
+
+            case 'stream_end':
+              // 流式响应结束
+              isStreaming.value = false;
+              if (currentQuestion.value && data.full_message) {
+                currentQuestion.value.content = data.full_message;
+                currentQuestion.value.isStreaming = false;
+              }
+              streamingContent.value = '';
+              streamingBuffer = '';
+              scrollToBottom();
+              break;
+
+            case 'feedback':
+              // 处理面试官反馈
+              console.log('收到面试反馈:', data.content);
+              showError(`面试官反馈: ${data.content}`);
+              break;
+
+            case 'end':
+              // 面试结束
+              websocket.close();
+              websocket = null;
+              closeWebSocket();
+              if (reconnectTimer) {
+                clearTimeout(reconnectTimer);
+                reconnectTimer = null;
+              }
+              endingInterview.value = false;
+              interviewStatus.value = '面试已结束';
+
+              // 通知uniapp面试结束
+              sendMessageToUniapp({
+                type: 'interviewEnd',
+                data: {
+                  result: data.summary?.overall_evaluation || '未提供结果',
+                  feedback: data.summary?.recommendation || '未提供反馈'
+                }
+              });
+
+              break;
+
+            case 'audio_ack':
+            case 'audio_result':
+              // 读取其中的answer/transcript字段并添加到面试对话区域的用户回答中
+              const answerText = data.answer || data.transcript;
+              if (answerText) {
+                if (currentQuestion.value && !currentQuestion.value.isStreaming) {
+                  conversationHistory.value = [
+                    ...conversationHistory.value,
+                    {
+                      ...currentQuestion.value,
+                      type: 'question'
+                    },
+                    {
+                      type: 'answer',
+                      content: answerText,
+                      timestamp: interviewTimer.value
+                    }
+                  ];
+                  currentQuestion.value = null;
+                } else {
+                  conversationHistory.value = [
+                    ...conversationHistory.value,
+                    {
+                      type: 'answer',
+                      content: answerText,
+                      timestamp: interviewTimer.value
+                    }
+                  ];
+                }
+                scrollToBottom();
+              }
+              break;
+
+            case 'error':
+              console.error('服务器错误:', data.error);
+              showError(data.error || '服务器错误');
+              break;
+          }
+        };
+
+        // Markdown 渲染函数
+        const renderMarkdown = (content) => {
+          if (!content) return '';
+          try {
+            return marked.parse(content, { breaks: true });
+          } catch (e) {
+            console.error('Markdown 解析错误:', e);
+            return content;
+          }
+        };
+
+        // 复制消息内容
+        const copyMessageContent = async (content) => {
+          try {
+            await navigator.clipboard.writeText(content);
+            showError('已复制到剪贴板');
+            setTimeout(() => {
+              errorMessage.value = '';
+            }, 1500);
+          } catch (err) {
+            console.error('复制失败:', err);
+            showError('复制失败，请手动复制');
+          }
+        };
+
+        // 播放base64音频的辅助函数
+        function playBase64Audio(base64Data) {
+          // 创建音频元素
+          const audio = new Audio();
+
+          // 直接使用base64数据作为src
+          audio.src = `data:audio/mp3;base64,${base64Data}`;
+
+          // 添加事件监听器
+          audio.oncanplaythrough = () => {
+            console.log('音频可以播放');
+            audio.play().catch(error => {
+              console.error('播放失败:', error);
+              showError('请点击播放按钮手动播放音频');
+              // 保存音频元素以便用户手动播放
+              currentQuestion.value.audioElement = audio;
+            });
+          };
+
+          audio.onerror = (error) => {
+            console.error('音频加载错误:', error);
+            showError('音频加载失败');
+          };
+
+          // 预加载音频
+          audio.load();
+          console.log('音频加载中...');
+        }
+
+        // 发送WebSocket消息
+        const sendMessage = (message) => {
+          if (websocket && wsConnected.value) {
+            websocket.send(JSON.stringify(message));
+          } else {
+            console.error('WebSocket未连接，无法发送消息');
+            showError('网络连接断开，无法发送回答');
+          }
+        };
+
+        // 计时器管理
+        const startTimer = () => {
+          if (timerInterval) clearInterval(timerInterval);
+          timerInterval = setInterval(() => {
+            interviewTimer.value++;
+          }, 1000);
+        };
+
+        // 停止计时器
+        const stopTimer = () => {
+          if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+          }
+        };
+
+        // 权限检查
+        const checkPermissions = async () => {
+          try {
+            // 检查摄像头权限
+            const cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            cameraStream.getTracks().forEach(track => track.stop());
+            cameraPermissionGranted.value = true;
+            console.log('摄像头权限已获取');
+
+            // 检查麦克风权限
+            const micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            micStream.getTracks().forEach(track => track.stop());
+            micPermissionGranted.value = true;
+            console.log('麦克风权限已获取');
+
+            return true;
+          } catch (error) {
+            console.error('检查权限失败:', error);
+            let errorMessage = '权限检查失败，请重试';
+
+            if (error.name === 'NotAllowedError') {
+              errorMessage = '需要摄像头和麦克风权限才能进行面试';
+            } else if (error.name === 'NotFoundError') {
+              errorMessage = '未找到摄像头或麦克风设备';
+            } else if (error.name === 'NotSupportedError') {
+              errorMessage = '浏览器不支持摄像头或麦克风功能';
+            }
+
+            showError(errorMessage);
+            return false;
+          }
+        };
+
+        // H5摄像头控制逻辑
+        const startH5Camera = async () => {
+          try {
+            // 获取视频流
+            const videoConstraints = {
+              video: {
+                facingMode: 'user',
+                width: { ideal: 640 },
+                height: { ideal: 480 }
+              },
+              audio: false
+            };
+
+            const videoStream = await navigator.mediaDevices.getUserMedia(videoConstraints);
+            cameraPermissionGranted.value = true;
+
+            if (!h5VideoRef.value) {
+              console.error('video元素未找到');
+              throw new Error('video元素未初始化');
+            }
+
+            h5VideoRef.value.onerror = (e) => {
+              console.error('视频元素发生错误:', e);
+              stopH5Camera();
+              isCameraOn.value = false;
+              showError('视频显示发生错误');
+            };
+
+            h5VideoRef.value.onloadedmetadata = () => {
+              h5VideoRef.value.play().catch(err => {
+                console.error('视频播放失败:', err);
+                stopH5Camera();
+                isCameraOn.value = false;
+                showError('视频播放失败，请检查摄像头');
+              });
+            };
+
+            h5VideoRef.value.srcObject = videoStream;
+            localVideoStream.value = videoStream;
+
+          } catch (error) {
+            console.error('H5摄像头启动失败:', error);
+            cameraPermissionGranted.value = false;
+            stopH5Camera();
+            isCameraOn.value = false;
+
+            let errorMessage = '摄像头启动失败';
+            if (error.name === 'NotAllowedError') {
+              errorMessage = '需要摄像头权限才能开启视频';
+            } else if (error.name === 'NotFoundError') {
+              errorMessage = '未找到摄像头设备';
+            } else if (error.name === 'NotSupportedError') {
+              errorMessage = '浏览器不支持摄像头功能';
+            }
+
+            showError(errorMessage);
+          }
+        };
+
+        const stopH5Camera = () => {
+          if (localVideoStream.value) {
+            localVideoStream.value.getTracks().forEach(track => {
+              track.stop();
+            });
+            localVideoStream.value = null;
+          }
+
+          if (h5VideoRef.value) {
+            h5VideoRef.value.srcObject = null;
+          }
+        };
+
+        // 开始定时捕获图片
+        const startImageCapture = () => {
+          // 每分钟发送一次图片
+          imageCaptureInterval = setInterval(() => {
+            captureAndSendImage();
+          }, 60000); // 60秒 = 1分钟
+
+          // 立即发送第一张图片
+          captureAndSendImage();
+        };
+
+        // 停止图片捕获
+        const stopImageCapture = () => {
+          if (imageCaptureInterval) {
+            clearInterval(imageCaptureInterval);
+            imageCaptureInterval = null;
+          }
+        };
+
+        // 捕获并发送图片
+        const captureAndSendImage = () => {
+          if (!isCameraOn.value || !localVideoStream.value || !wsConnected.value) {
+            return;
+          }
+
+          try {
+            const canvas = document.createElement('canvas');
+            const video = h5VideoRef.value;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            // 将画布内容转换为Base64编码的JPEG图片
+            const imageData = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+
+            // 发送图片数据
+            sendMessage({
+              type: 'image',
+              data: imageData,
+              timestamp: Date.now()
+            });
+          } catch (error) {
+            console.error('捕获图片失败:', error);
+            showError('捕获图片失败');
+          }
+        };
+
+        const startRecording = async () => {
+          if (!wsConnected.value || isRecording.value) return;
+
+          try {
+            isRecording.value = true;
+            audioChunks = [];
+
+            const audioConstraints = {
+              audio: {
+                sampleRate: 16000,
+                channelCount: 1 // 明确请求单声道
+              }
+            };
+
+            const audioStream = await navigator.mediaDevices.getUserMedia(audioConstraints);
+            localAudioStream.value = audioStream;
+
+            audioContext = new AudioContext({ sampleRate: 16000 }); // 尝试设置目标采样率
+
+            // 验证实际采样率
+            if (audioContext.sampleRate !== 16000) {
+              console.warn(`实际采样率: ${audioContext.sampleRate}, 期望16000`);
+            }
+
+            mediaStreamSource = audioContext.createMediaStreamSource(audioStream);
+
+            // 使用AudioWorklet替代ScriptProcessorNode (推荐)
+            try {
+              await audioContext.audioWorklet.addModule('audio-processor.js');
+              const workletNode = new AudioWorkletNode(audioContext, 'audio-processor');
+              mediaStreamSource.connect(workletNode);
+              workletNode.port.onmessage = (e) => {
+                if (!isRecording.value || !isMicOn.value) return;
+                audioChunks.push(e.data);
+              };
+            } catch (workletError) {
+              console.warn('AudioWorklet不可用，回退到ScriptProcessor');
+              processor = audioContext.createScriptProcessor(4096, 1, 1);
+              processor.onaudioprocess = (e) => {
+                if (!isRecording.value || !isMicOn.value) return;
+                const inputData = e.inputBuffer.getChannelData(0);
+                const pcmData = convertFloat32To16BitPCM(inputData);
+                audioChunks.push(pcmData);
+              };
+              mediaStreamSource.connect(processor);
+              processor.connect(audioContext.destination);
+            }
+
+          } catch (error) {
+            console.error('开始录音失败:', error);
+            isRecording.value = false;
+            stopRecording(); // 确保清理资源
+            showError('无法开始录音');
+          }
+        };
+
+        // 停止录音并发送音频数据
+        const stopRecording = async () => {
+          if (!isRecording.value) return;
+
+          isRecording.value = false;
+
+          try {
+            // 断开音频处理器
+            if (processor) {
+              processor.disconnect();
+              processor = null;
+            }
+
+            if (mediaStreamSource) {
+              mediaStreamSource.disconnect();
+              mediaStreamSource = null;
+            }
+
+            if (audioContext) {
+              await audioContext.close();
+              audioContext = null;
+            }
+
+            // 停止音频流
+            if (localAudioStream.value) {
+              localAudioStream.value.getTracks().forEach(track => track.stop());
+              localAudioStream.value = null;
+            }
+
+            // 如果麦克风关闭且有音频数据，发送音频
+            if (!isMicOn.value && audioChunks.length > 0) {
+              // 合并所有音频块
+              const totalLength = audioChunks.reduce((acc, chunk) => acc + chunk.length, 0);
+              const mergedData = new Int16Array(totalLength);
+              let offset = 0;
+
+              audioChunks.forEach(chunk => {
+                mergedData.set(chunk, offset);
+                offset += chunk.length;
+              });
+
+              // 转换为Base64
+              const base64Data = arrayBufferToBase64(mergedData.buffer);
+
+              // 发送音频数据
+              sendMessage({
+                type: 'audio',
+                data: base64Data,
+                timestamp: Date.now()
+              });
+            }
+
+            // 清空音频块
+            audioChunks = [];
+
+          } catch (error) {
+            console.error('停止录音失败:', error);
+            showError('处理录音数据失败');
+          }
+        };
+
+        // 辅助函数：将Float32转换为16位PCM
+        const convertFloat32To16BitPCM = (input) => {
+          const output = new Int16Array(input.length);
+          for (let i = 0; i < input.length; i++) {
+            const s = Math.max(-1, Math.min(1, input[i]));
+            output[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+          }
+          return output;
+        };
+
+        // 辅助函数：将ArrayBuffer转换为Base64
+        const arrayBufferToBase64 = (buffer) => {
+          let binary = '';
+          const bytes = new Uint8Array(buffer);
+          const len = bytes.byteLength;
+          for (let i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+          }
+          return window.btoa(binary);
+        };
+
+        // 滚动到对话底部
+        const scrollToBottom = async () => {
+          await nextTick(); // 等待 DOM 更新完成
+          const container = document.getElementById('conversation-container');
+          if (container) {
+            // 使用平滑滚动并确保滚动到底部（考虑 padding-bottom）
+            setTimeout(() => {
+              container.scrollTo({
+                top: container.scrollHeight - container.clientHeight + 20,
+                behavior: 'smooth'
+              });
+            }, 50);
+          }
+        };
+
+        // 发送文本回答
+        const sendTextAnswer = () => {
+          if (textAnswer.value.trim() && wsConnected.value) {
+            // 保存当前回答内容用于本地显示
+            const answerContent = textAnswer.value;
+
+            const answer = {
+              type: 'text',
+              data: answerContent,
+              timestamp: interviewTimer.value
+            };
+            sendMessage(answer);
+
+            // 将当前问题添加到历史记录（如果有）
+            if (currentQuestion.value) {
+              conversationHistory.value = [
+                ...conversationHistory.value,
+                {
+                  ...currentQuestion.value,
+                  type: 'question'
+                }
+              ];
+              // 清除当前问题，等待后端确认用户回答
+              currentQuestion.value = null;
+            }
+
+            // 清空输入框
+            textAnswer.value = '';
+            scrollToBottom();
+          }
+        };
+        // 切换摄像头状态
+        const toggleCamera = () => {
+          isCameraOn.value = !isCameraOn.value;
+          if (isCameraOn.value) {
+            startH5Camera();
+          } else {
+            stopH5Camera();
+          }
+        };
+
+        // 切换麦克风状态
+        const toggleMic = () => {
+          isMicOn.value = !isMicOn.value;
+          if (!isMicOn.value && isRecording.value) {
+            // 麦克风关闭时停止录音并发送数据
+            stopRecording();
+          } else if (isMicOn.value && !isRecording.value) {
+            // 麦克风打开时开始录音
+            startRecording();
+          }
+        };
+
+        onMounted(() => {
+          window.addEventListener('message', receiveMessageFromUniapp);
+          requestUserInfo();
+          requestInterval.value = setInterval(requestUserInfo, 5000);
+        });
+
+        onUnmounted(() => {
+          window.removeEventListener('message', receiveMessageFromUniapp);
+          if (requestInterval.value) {
+            clearInterval(requestInterval.value);
+          }
+          if (userInfoTimeout.value) {
+            clearTimeout(userInfoTimeout.value);
+          }
+          closeWebSocket();
+        });
+
+        return {
+          wsConnected,
+          wsConnecting,
+          endingInterview,
+          interviewStatus,
+          interviewTimer,
+          errorMessage,
+          isCameraOn,
+          isMicOn,
+          isRecording,
+          currentQuestion,
+          conversationHistory,
+          textAnswer,
+          streamingContent,
+          isStreaming,
+          user,
+          userAvatar,
+          formattedTime,
+          formatTime,
+          pageInitialized,
+          toggleInterview,
+          handlePause,
+          handleResume,
+          handleEnd,
+          handleCancel,
+          sendTextAnswer,
+          toggleCamera,
+          toggleMic,
+          startRecording,
+          stopRecording,
+          h5VideoRef,
+          renderMarkdown,
+          copyMessageContent,
+          sessionStatus,
+          sessionStatusText
+        };
+      }
+    });
+
+    app.mount('#app');
+  </script>
+</body>
+
+</html>

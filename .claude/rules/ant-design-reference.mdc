@@ -1,0 +1,35 @@
+---
+description: 做前端界面时始终参考：Ant Design 卡片/图表/数据展示与设计规范
+alwaysApply: true
+---
+
+# Ant Design 参考与选型
+
+做样式和组件选择时，请参考以下 Ant Design 官方资源：
+
+## 1. 卡片
+
+- **Card**：典型 / 无边框 / 简洁 / Meta / 栅格 / 加载 / 内嵌 / 带页签 / 自定义结构  
+  见：<https://ant-design.antgroup.com/components/card-cn>
+- 高级卡片：ProComponents 的 **ProCard**、**StatisticCard**
+
+## 2. 图表
+
+Ant Design Charts 示例站：<https://ant-design-charts.antgroup.com/examples>  
+优先参考：
+
+- **折线图**：平滑、多色、阈值、缩略轴、填充、手绘风格
+- **面积图**：堆叠、渐变、阶梯、河流图
+- **柱状图**：分组、堆叠、背景、2.5D、自定义 Legend / Tooltip
+- **双轴图**：柱线混合、双折线
+- **迷你图、仪表盘、水波图** 等按需选用
+
+## 3. 数据展示
+
+- 组合使用：**Card** + **Statistic** + **Table** + **Descriptions** + **Timeline** + **Progress**
+- 见组件总览「数据展示」分类
+
+## 4. 设计规范
+
+- 遵循 Ant Design 设计规范：<https://ant-design.antgroup.com/docs/spec/introduce-cn>
+- 注意层次、对齐和留白

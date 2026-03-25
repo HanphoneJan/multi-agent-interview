@@ -1,0 +1,273 @@
+# Agent 角色配置
+# 定义各个 Agent 的角色、目标、背景和 LLM 配置
+
+agents:
+  # ==================== 面试官 Agent ====================
+  interviewer:
+    name: "面试官"
+    role: "技术面试官"
+    goal: "通过专业的技术面试，全面评估候选人的技术能力和综合素质"
+    backstory: |
+      你是一位拥有10年以上经验的技术面试官，曾在多家知名科技公司担任技术负责人。
+      你擅长通过深入的对话了解候选人的技术深度和广度，能够营造轻松的面试氛围，
+      让候选人充分展示自己的能力。你注重考察候选人的思维方式、解决问题的能力和学习潜力。
+    llm_config:
+      model: "qwen-plus"
+      temperature: 0.7
+      max_tokens: 2048
+      top_p: 0.9
+    capabilities:
+      - generate_question      # 生成面试问题
+      - follow_up             # 追问
+      - control_pace          # 控制节奏
+      - wrap_up               # 结束面试
+    styles:
+      friendly:
+        name: "友好型"
+        description: "营造轻松氛围，适合初级候选人"
+        temperature: 0.8
+      professional:
+        name: "专业型"
+        description: "专业严谨，适合中高级候选人"
+        temperature: 0.6
+      challenging:
+        name: "挑战型"
+        description: "深入追问，适合专家级候选人"
+        temperature: 0.5
+
+  # ==================== 评估员 Agent ====================
+  evaluator:
+    name: "评估员"
+    role: "面试评估员"
+    goal: "客观、公正地评估候选人的面试表现，提供多维度评分和详细反馈"
+    backstory: |
+      你是一位资深的技术人才评估专家，拥有丰富的人力资源和技术面试评估经验。
+      你擅长从多个维度全面评估候选人，包括技术能力、沟通表达、逻辑思维等方面。
+      你的评估客观公正，能够为招聘决策提供有价值的参考意见。
+    llm_config:
+      model: "qwen-plus"
+      temperature: 0.3
+      max_tokens: 2048
+      top_p: 0.9
+    capabilities:
+      - evaluate_answer       # 评估回答
+      - evaluate_technical    # 技术评估
+      - generate_report       # 生成报告
+      - real_time_feedback    # 实时反馈
+    evaluation_dimensions:
+      - name: "professional_knowledge"
+        display_name: "专业知识"
+        description: "专业知识的广度和深度"
+        weight: 1.0
+      - name: "skill_match"
+        display_name: "技能匹配度"
+        description: "技能与岗位要求的匹配度"
+        weight: 1.0
+      - name: "language_expression"
+        display_name: "语言表达"
+        description: "语言表达的清晰度和逻辑性"
+        weight: 0.8
+      - name: "logical_thinking"
+        display_name: "逻辑思维"
+        description: "逻辑思维的严密性和条理性"
+        weight: 1.0
+      - name: "stress_response"
+        display_name: "抗压能力"
+        description: "面对压力和挑战的应对能力"
+        weight: 0.8
+      - name: "personality"
+        display_name: "性格特质"
+        description: "性格特质与团队文化的匹配度"
+        weight: 0.6
+      - name: "motivation"
+        display_name: "求职动机"
+        description: "求职动机和职业规划"
+        weight: 0.7
+      - name: "value"
+        display_name: "价值观匹配"
+        description: "价值观与公司文化的匹配度"
+        weight: 0.7
+    score_levels:
+      - min: 4.5
+        max: 5.0
+        level: "excellent"
+        label: "优秀"
+        description: "超出预期，表现卓越"
+      - min: 3.5
+        max: 4.4
+        level: "good"
+        label: "良好"
+        description: "符合预期，表现良好"
+      - min: 2.5
+        max: 3.4
+        level: "average"
+        label: "一般"
+        description: "基本合格，有提升空间"
+      - min: 1.5
+        max: 2.4
+        level: "below_average"
+        label: "较差"
+        description: "低于预期，需要改进"
+      - min: 0.0
+        max: 1.4
+        level: "poor"
+        label: "很差"
+        description: "严重不符合要求"
+
+  # ==================== 学习顾问 Agent ====================
+  coach:
+    name: "学习顾问"
+    role: "技术学习顾问"
+    goal: "帮助候选人识别能力薄弱点，制定个性化学习计划，推荐合适的学习资源"
+    backstory: |
+      你是一位经验丰富的技术学习顾问和职业发展导师，曾在多家知名科技公司负责技术培训和人才培养。
+      你擅长分析技术人员的能力短板，能够根据个人情况制定切实可行的学习计划。
+      你熟悉各种技术学习资源，能够为不同水平的学员推荐最合适的学习材料。
+    llm_config:
+      model: "qwen-plus"
+      temperature: 0.7
+      max_tokens: 2048
+      top_p: 0.9
+    capabilities:
+      - analyze_weaknesses      # 分析薄弱点
+      - generate_learning_plan  # 生成学习计划
+      - recommend_resources     # 推荐资源
+      - career_guidance         # 职业指导
+    learning_resource_types:
+      - book
+      - video
+      - article
+      - course
+      - project
+      - documentation
+    learning_paths:
+      frontend:
+        name: "前端学习路径"
+        stages:
+          - name: "基础阶段"
+            duration: "4-6周"
+            topics:
+              - "HTML/CSS"
+              - "JavaScript 基础"
+              - "DOM 操作"
+          - name: "框架阶段"
+            duration: "6-8周"
+            topics:
+              - "React/Vue"
+              - "状态管理"
+              - "路由管理"
+          - name: "进阶阶段"
+            duration: "8-12周"
+            topics:
+              - "性能优化"
+              - "工程化"
+              - "测试"
+      backend:
+        name: "后端学习路径"
+        stages:
+          - name: "基础阶段"
+            duration: "4-6周"
+            topics:
+              - "编程语言"
+              - "数据库基础"
+              - "Web 框架"
+          - name: "进阶阶段"
+            duration: "6-8周"
+            topics:
+              - "缓存"
+              - "消息队列"
+              - "微服务"
+          - name: "高级阶段"
+            duration: "8-12周"
+            topics:
+              - "分布式系统"
+              - "高可用设计"
+              - "性能调优"
+      algorithm:
+        name: "算法学习路径"
+        stages:
+          - name: "基础阶段"
+            duration: "4-6周"
+            topics:
+              - "时间复杂度"
+              - "基础数据结构"
+              - "基础算法"
+          - name: "进阶阶段"
+            duration: "6-8周"
+            topics:
+              - "高级数据结构"
+              - "动态规划"
+              - "图算法"
+          - name: "高级阶段"
+            duration: "持续学习"
+            topics:
+              - "竞赛算法"
+              - "高级技巧"
+
+  # ==================== 流程控制器 Agent ====================
+  flow_controller:
+    name: "流程控制器"
+    role: "面试流程控制员"
+    goal: "管理面试流程，确保面试按计划进行，根据情况动态调整"
+    backstory: |
+      你是一位专业的面试流程管理员，负责协调面试官、评估员和学习顾问之间的工作。
+      你能够根据面试进展和候选人表现，动态调整面试流程，确保面试高效、有序地进行。
+    llm_config:
+      model: "qwen-plus"
+      temperature: 0.4
+      max_tokens: 1024
+      top_p: 0.9
+    capabilities:
+      - manage_flow           # 管理流程
+      - adjust_pace          # 调整节奏
+      - coordinate_agents    # 协调 Agent
+      - handle_exception     # 处理异常
+    flow_rules:
+      max_duration: "60分钟"
+      min_duration: "20分钟"
+      stage_timeout:
+        self_intro: "5分钟"
+        technical: "30分钟"
+        coding: "25分钟"
+        behavioral: "15分钟"
+        q_and_a: "10分钟"
+      adaptive_rules:
+        - condition: "候选人表现优秀"
+          action: "提高问题难度"
+        - condition: "候选人表现不佳"
+          action: "降低问题难度或提前结束"
+        - condition: "时间不足"
+          action: "跳过非关键阶段"
+
+# ==================== 全局配置 ====================
+global:
+  # 默认 LLM 配置
+  default_llm:
+    model: "qwen-plus"
+    temperature: 0.7
+    max_tokens: 2048
+    top_p: 0.9
+
+  # 面试全局设置
+  interview:
+    default_duration: "45分钟"
+    max_duration: "90分钟"
+    min_duration: "20分钟"
+    record_enabled: true
+    evaluation_enabled: true
+    real_time_feedback_enabled: true
+
+  # Agent 协作配置
+  collaboration:
+    mode: "sequential"  # sequential / parallel / adaptive
+    communication_protocol: "shared_context"
+    conflict_resolution: "priority_based"
+
+  # 日志配置
+  logging:
+    level: "INFO"
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    agents:
+      - interviewer
+      - evaluator
+      - coach

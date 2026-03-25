@@ -1,0 +1,61 @@
+# Development Workflow Rules
+
+This file contains development workflow rules for Claude Code when working with this repository.
+
+## Task Completion Checklist
+
+**Before marking any task as complete, you MUST:**
+
+1. **Run relevant tests:**
+   - API changes: `pytest app/tests/test_api/ -v`
+   - WebSocket changes: `pytest app/tests/test_websockets.py -v`
+   - Service changes: `pytest app/tests/test_services/ -v`
+   - Single test: `pytest path/to/test.py::test_function -xvs`
+
+2. **Verify functionality:**
+   - Core feature works as expected
+   - Exception handling is tested
+   - Return data format is correct
+
+3. **Update documentation:**
+   - Update `fastapi/docs/REFACTOR_PLAN.md` when completing tasks
+   - Mark completed tasks with ✅
+   - Update progress percentage in section 6.0
+   - Add version history entry
+
+## Testing Requirements
+
+**New features must include:**
+- Unit tests for core logic
+- Integration tests for API endpoints
+- Edge case coverage
+- Error path testing
+
+**Test commands:**
+```bash
+cd fastapi
+pytest                          # Run all tests
+pytest -x                      # Stop on first failure
+pytest --tb=short              # Short traceback
+pytest -k "websocket"          # Run tests matching pattern
+```
+
+## Documentation Updates
+
+**When completing tasks in FastAPI:**
+1. Read `fastapi/docs/REFACTOR_PLAN.md`
+2. Update the "6.0 当前实施进度" table
+3. Add completed tasks to "已完成任务" section
+4. Update "下一步" section
+5. Increment version in "文档版本历史"
+
+**Example update:**
+```markdown
+**已完成任务：**
+- ✅ **任务名称**（步骤X）
+  - ✅ 子任务1
+  - ✅ 子任务2
+
+**文档版本历史**：
+- v1.2（2026-02-26）：完成任务X，启动任务Y
+```

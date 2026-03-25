@@ -1,0 +1,31 @@
+{
+  "testUsers": {
+    "newUser": {
+      "email": "test_new@example.com",
+      "password": "Test123456",
+      "phone": "13800138001",
+      "name": "测试新用户"
+    },
+    "experiencedUser": {
+      "email": "test_exp@example.com",
+      "password": "Test123456",
+      "phone": "13800138002",
+      "name": "测试老用户"
+    },
+    "adminUser": {
+      "email": "admin@example.com",
+      "password": "Admin123456",
+      "name": "测试管理员"
+    }
+  },
+  "invalidUsers": {
+    "wrongPassword": {
+      "email": "test_new@example.com",
+      "password": "WrongPassword123"
+    },
+    "nonExistent": {
+      "email": "nonexistent@example.com",
+      "password": "AnyPassword123"
+    }
+  }
+}
