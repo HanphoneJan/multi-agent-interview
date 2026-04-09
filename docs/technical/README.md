@@ -11,6 +11,9 @@
 | [03-RAG与推荐系统](03-rag-and-recommendation.md) | RAG实现、向量化、混合推荐 | 20分钟 |
 | [04-小白概念指南](04-core-concepts-for-beginners.md) | Agent/RAG/Embedding等概念大白话解释 | 15分钟 |
 | [05-面试准备指南](05-interview-preparation.md) | 面试话术、常见问题、技术亮点 | 25分钟 |
+| [06-面试流程与模式](06-interview-process.md) | 面试流程控制、实时/非实时模式、生命周期 | 20分钟 |
+| [07-向量数据库详解](07-vector-database-deep-dive.md) | Milvus原理、技术选型、sentence-transformers | 25分钟 |
+| [08-面试QA深度解析](08-interview-qa-deep-dive.md) | 10个犀利问题的详细回答与代码佐证 | 30分钟 |
 
 ## 🎯 推荐阅读顺序
 
@@ -33,7 +36,10 @@
 1. [01-架构总览](01-architecture-overview.md) - 快速了解项目
 2. [02-Agent系统设计](02-agent-system-design.md) - 深入核心架构
 3. [03-RAG与推荐系统](03-rag-and-recommendation.md) - 理解算法实现
-4. [05-面试准备指南](05-interview-preparation.md) - 准备面试
+4. [06-面试流程与模式](06-interview-process.md) - 理解面试模式设计
+5. [07-向量数据库详解](07-vector-database-deep-dive.md) - 深入存储原理
+6. [08-面试QA深度解析](08-interview-qa-deep-dive.md) - 应对犀利问题
+7. [05-面试准备指南](05-interview-preparation.md) - 准备面试
 
 ## 💡 核心亮点速览
 
