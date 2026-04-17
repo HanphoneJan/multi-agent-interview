@@ -1,103 +1,13 @@
 """推荐系统 API"""
 import json
 from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query
 from pydantic import BaseModel
-
-from app.services.recall import MultiPathRecall
-from app.services.ranking import RankingService
 
 router = APIRouter(prefix="/recommendations", tags=["recommendations"])
 
 
-# ========== 请求/响应模型 ==========
-
-class PersonalizedRequest(BaseModel):
-    """个性化推荐请求"""
-    user_id: str
-    query: Optional[str] = None
-    top_k: int = 10
-    diversity: bool = True
-
-
-class RecommendationItem(BaseModel):
-    """推荐项"""
-    resource_id: str
-    score: float
-    reason: str
-
-
-class RecommendationResponse(BaseModel):
-    """推荐响应"""
-    user_id: str
-    items: List[RecommendationItem]
-    total: int
-
-
 # ========== API 端点 ==========
-
-@router.post("/personalized", response_model=RecommendationResponse)
-async def get_personalized_recommendations(request: PersonalizedRequest):
-    """
-    获取个性化推荐
-
-    流程：
-    1. 多路召回（向量、I2I、热门、新资源、规则）
-    2. 特征工程与排序
-    3. 多样性重排
-    """
-    try:
-        # 召回
-        recall_service = MultiPathRecall()
-        recalled = await recall_service.recall(
-            user_id=request.user_id,
-            query_text=request.query,
-            top_k=200
-        )
-
-        if not recalled:
-            return RecommendationResponse(
-                user_id=request.user_id,
-                items=[],
-                total=0
-            )
-
-        # 排序
-        ranking_service = RankingService()
-        resource_ids = [r.resource_id for r in recalled]
-
-        if request.diversity:
-            ranked = await ranking_service.rank_with_diversity(
-                user_id=request.user_id,
-                resource_ids=resource_ids,
-                top_k=request.top_k
-            )
-        else:
-            ranked = await ranking_service.rank(
-                user_id=request.user_id,
-                resource_ids=resource_ids
-            )
-            ranked = ranked[:request.top_k]
-
-        # 构建响应
-        items = [
-            RecommendationItem(
-                resource_id=r.resource_id,
-                score=r.score,
-                reason=r.reason
-            )
-            for r in ranked
-        ]
-
-        return RecommendationResponse(
-            user_id=request.user_id,
-            items=items,
-            total=len(items)
-        )
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 
 @router.get("/similar")
 async def get_similar_resources(
