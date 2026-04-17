@@ -173,7 +173,7 @@ async def create_crew_session(
         )
 
         state = await service.create_session(
-            user_id=current_user["user_id"],
+            user_id=current_user["id"],
             config=config,
         )
 
@@ -516,7 +516,7 @@ async def list_active_sessions(
     """获取活动会话列表"""
     sessions = service.list_active_sessions()
     # 过滤当前用户的会话
-    user_sessions = [s for s in sessions if s.user_id == current_user["user_id"]]
+    user_sessions = [s for s in sessions if s.user_id == current_user["id"]]
 
     return [
         CrewSessionStatusResponse(
