@@ -122,7 +122,7 @@ cd fastapi
 
 当前种子数据来源：
 
-- `archive/django/interview_2026-02-13_pgsql_data.sql`
+- `archive/` 目录下的 SQL 文件
 
 当前内置测试账号：
 

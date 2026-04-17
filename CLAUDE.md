@@ -4,30 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an **AI Interview Agent** system with a dual-backend architecture:
+This is an **AI Interview Agent** system with a **FastAPI + UniApp** architecture:
 
-- **Django Backend** (`django/`): Main backend with WebSocket support (Daphne), handling user management, interviews, evaluations, and learning management
-- **FastAPI Backend** (`fastapi/`): Async API service handling real-time interview sessions and WebSocket communications
-- **Database**: PostgreSQL (shared between both backends)
+- **FastAPI Backend** (`fastapi/`): Async Python API handling all HTTP APIs, WebSocket communications, real-time interview sessions, and business logic
+- **UniApp Frontend** (`uniapp/`): Vue 3 cross-platform application supporting WeChat mini-program and H5
+- **Database**: PostgreSQL
 
 ## Architecture
-
-### Django Backend (`django/`)
-
-Django 5.2.3 with ASGI support via Daphne, using Django REST Framework for APIs and Django Channels for WebSockets.
-
-**Key Apps:**
-- `user_manager` - User authentication, JWT tokens (simplejwt), WeChat mini-program integration
-- `interview_manager` - Interview sessions, scheduling, real-time communication
-- `evaluation_system` - Performance evaluation and scoring
-- `learning_manager` - Learning materials and progress tracking
-
-**Key Configuration:**
-- ASGI application: `AiInterviewAgent.asgi.application`
-- Custom user model: `user_manager.User`
-- JWT authentication with 30min access / 1 day refresh tokens
-- CORS enabled for all origins (development)
-- Media files served from `media/` directory
 
 ### FastAPI Backend (`fastapi/`)
 
@@ -48,31 +31,6 @@ Modern async Python API with SQLAlchemy ORM and Alembic migrations.
 - CORS middleware configured
 
 ## Common Commands
-
-### Django Backend
-
-```bash
-cd django
-
-# Development server (with hot reload)
-python manage.py runserver
-
-# Production ASGI server
-daphne -b 0.0.0.0 -p 8000 AiInterviewAgent.asgi:application
-
-# Database migrations
-python manage.py makemigrations
-python manage.py migrate
-
-# Create superuser
-python manage.py createsuperuser
-
-# Shell
-python manage.py shell
-
-# Collect static files
-python manage.py collectstatic
-```
 
 ### FastAPI Backend
 
@@ -99,13 +57,6 @@ uv run python app/main.py
 
 ### Testing
 
-**Django:**
-```bash
-cd django
-python manage.py test
-python manage.py test app_name.TestClass.test_method  # Single test
-```
-
 **FastAPI:**
 ```bash
 cd fastapi
@@ -117,7 +68,7 @@ pytest -k "test_name_pattern"  # Run tests matching pattern
 ### Docker
 
 ```bash
-# Build and run both services
+# Build and run services
 docker-compose up --build
 
 # Run in background
@@ -132,14 +83,7 @@ docker-compose down
 
 ## Environment Configuration
 
-Both backends require `.env` files with these key variables:
-
-**Django** (`django/.env`):
-- `SECRET_KEY` - Django secret key
-- `DATABASE_NAME`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_HOST`, `DATABASE_PORT`
-- `SIGNING_KEY` - JWT signing key
-- `WECHAT_APP_ID`, `WECHAT_APP_SECRET` - WeChat mini-program credentials
-- `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD` - SMTP settings
+Backend requires `.env` file with these key variables:
 
 **FastAPI** (`fastapi/.env`):
 - `DATABASE_URL` - PostgreSQL connection string
@@ -149,11 +93,8 @@ Both backends require `.env` files with these key variables:
 
 ## Development Notes
 
-- **WebSocket Timeout**: Django Daphne timeout set to 600 seconds (`DAPHNE_TIMEOUT`)
-- **Media Files**: Django serves user-uploaded files from `media/` directory
-- **Logging**: Django logs to both console and `logs/django.log`
 - **FFmpeg**: Required for media processing; path configured in `settings.py`
-- **CORS**: Both backends have CORS enabled for all origins in development
+- **CORS**: CORS enabled for all origins in development
 
 ## Development Workflow
 
@@ -288,14 +229,6 @@ Vue 3 + UniApp 跨平台应用，支持微信小程序和 H5。
 
 ```
 Ai-Interview-Agent/
-├── django/                    # Django backend
-│   ├── AiInterviewAgent/     # Project settings
-│   ├── user_manager/         # User management app
-│   ├── interview_manager/    # Interview logic app
-│   ├── evaluation_system/    # Evaluation/scoring app
-│   ├── learning_manager/     # Learning materials app
-│   ├── logs/                 # Log files
-│   └── media/                # User-uploaded files
 ├── fastapi/                   # FastAPI backend
 │   ├── app/
 │   │   ├── api/v1/          # API routes

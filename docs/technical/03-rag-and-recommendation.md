@@ -525,7 +525,7 @@ def _apply_diversity(
 RECOMMENDATION_RULES = {
     "professional_knowledge": {
         "threshold": 60,
-        "tags": ["Python", "Java", "Go", "Django", "Spring"],
+        "tags": ["Python", "Java", "Go", "FastAPI", "Spring"],
     },
     "logical_thinking": {
         "threshold": 60,

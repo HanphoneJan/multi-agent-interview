@@ -237,7 +237,7 @@ if not session_dict.get("scenario_is_realtime"):
     │
     ▼
 ┌─────────────────────────────────────────────┐
-│ 1. 创建面试会话 (Django API)                 │
+│ 1. 创建面试会话 (FastAPI API)                │
 │    POST /api/interviews/sessions/            │
 │    返回: session_id, scenario_config         │
 └─────────────────────────────────────────────┘
@@ -492,7 +492,7 @@ async def handle_end_interview(session_id, user_id, db, ...):
 
 **建议回答：**
 
-> 启动流程分为四步：首先前端调用 Django API 创建会话获取 session_id，然后建立 WebSocket 连接，接着发送 start 消息携带场景配置，服务端初始化 Agent、更新数据库状态为 in_progress，最后生成第一个问题返回给前端。
+> 启动流程分为四步：首先前端调用 FastAPI API 创建会话获取 session_id，然后建立 WebSocket 连接，接着发送 start 消息携带场景配置，服务端初始化 Agent、更新数据库状态为 in_progress，最后生成第一个问题返回给前端。
 >
 > 结束流程也分四步：接收 end 消息后，更新数据库状态为 completed 并记录 end_time，计算面试时长和问题数量，发送总结消息给前端，最后触发异步任务生成评估报告和推荐资源，同时清理 WebSocket 连接和临时资源。
 

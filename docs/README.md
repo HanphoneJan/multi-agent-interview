@@ -35,8 +35,8 @@
 1. `fastapi/migrate_db.py`
 2. `fastapi/scripts/seed_db.py`
 
-`seed_db.py` 会只读使用 `archive/django/interview_2026-02-13_pgsql_data.sql` 导入种子数据，不会修改归档文件。
+`seed_db.py` 会只读使用 `archive/` 目录下的 SQL 文件导入种子数据，不会修改归档文件。
 
 ## 归档说明
 
-历史 Django 资料保留在 `archive/`，视为只读归档。
+历史资料保留在 `archive/`，视为只读归档。
