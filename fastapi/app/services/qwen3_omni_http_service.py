@@ -33,8 +33,11 @@ class Qwen3OmniHTTPService:
 
     def __init__(self):
         settings = get_settings()
+        # Qwen3-Omni 使用专属 DashScope 配置（多模态，不走统一 LLM）
         self.api_key = settings.DASHSCOPE_API_KEY or os.getenv("DASHSCOPE_API_KEY", "")
-        self.base_url = getattr(settings, "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        self.base_url = getattr(
+            settings, "DASHSCOPE_BASE_URL", "https://dashscope.aliyuncs.com/compatible-mode/v1"
+        )
         self.model = "qwen3-omni-flash-2025-12-01"
 
         # Initialize OpenAI client

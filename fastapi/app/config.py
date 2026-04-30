@@ -38,10 +38,23 @@ class Settings(BaseSettings):
     ALIYUN_ASR_APPKEY: str
     ALIYUN_TTS_APPKEY: str = ""  # 保留兼容
 
-    # Qwen 通义千问 Configuration (LLM)
-    QWEN_API_KEY: str = ""  # DashScope/百炼 API Key，留空则 LLM 使用 fallback
+    # Unified LLM Configuration (推荐，优先使用)
+    # 支持任何 OpenAI 兼容的 API 端点
+    LLM_API_KEY: str = ""           # 统一 LLM API Key，若配置则优先使用
+    LLM_BASE_URL: str = "https://api.openai.com/v1"
+    LLM_MODEL: str = "gpt-4o-mini"
+    LLM_TEMPERATURE: float = 0.7
+    LLM_MAX_TOKENS: int = 2048
+
+    # Qwen 通义千问 Configuration (向后兼容)
+    QWEN_API_KEY: str = ""  # DashScope/百炼 API Key
     DASHSCOPE_API_KEY: str = ""  # DashScope Realtime API Key (用于 Qwen3-Omni)
     DASHSCOPE_BASE_URL: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"  # DashScope API Base URL
+
+    # Legacy OpenAI Configuration (向后兼容)
+    OPENAI_API_KEY: str = ""
+    OPENAI_BASE_URL: str = ""
+    OPENAI_MODEL: str = ""
 
     # XFYun 讯飞星火 TTS Configuration
     XFYUN_APP_ID: str = ""      # 讯飞 APP ID

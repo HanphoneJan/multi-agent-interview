@@ -182,13 +182,13 @@ class TestReportGeneration:
     async def _generate_report(self, qa_text: str) -> Dict:
         """生成报告（模拟完整流程）"""
         from app.core.prompts import REPORT_PROMPT
-        from app.core.qwen_client import qwen_chat_json
+        from app.core.llm_client import llm_chat_json
 
         prompt = REPORT_PROMPT.format(qa_evaluations=qa_text)
         messages = [{"role": "user", "content": prompt}]
 
         try:
-            raw = await qwen_chat_json(messages)
+            raw = await llm_chat_json(messages)
         except Exception as e:
             # 如果 Qwen 未配置，使用模拟数据
             return self._get_mock_report()

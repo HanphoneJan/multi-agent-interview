@@ -190,7 +190,7 @@ async def _analyze_resume_with_llm(resume_text: str, user_info: dict) -> dict:
     Analyze resume using LLM.
     Returns: {"score": str, "summary": str}
     """
-    from app.core.qwen_client import qwen_chat_json
+    from app.core.llm_client import llm_chat_json
 
     # Prepare user context
     major = user_info.get("major", "未提供")
@@ -226,7 +226,7 @@ async def _analyze_resume_with_llm(resume_text: str, user_info: dict) -> dict:
     ]
 
     try:
-        result = await qwen_chat_json(messages)
+        result = await llm_chat_json(messages)
 
         # Extract score and summary
         score = result.get("score", "6.0")

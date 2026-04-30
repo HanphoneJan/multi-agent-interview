@@ -12,7 +12,7 @@ from app.agents.prompts.interviewer import (
     INTERVIEWER_SYSTEM_PROMPT,
     INTERVIEWER_TASK_TEMPLATES,
 )
-from app.services.qwen3_omni_http_service import Qwen3OmniHTTPService
+from app.core.llm_client import get_llm_client
 from app.utils.log_helper import get_logger
 
 logger = get_logger("agents.interviewer")
@@ -53,7 +53,7 @@ class InterviewerAgent(BaseAgent):
             llm_config=llm_config,
             agent_id=agent_id,
         )
-        self.llm_service = Qwen3OmniHTTPService()
+        self.llm_client = get_llm_client()
         self._conversation_history: list[dict[str, Any]] = []
 
     async def execute(self, task: Task, context: dict[str, Any]) -> AgentOutput:
@@ -112,12 +112,10 @@ class InterviewerAgent(BaseAgent):
         try:
             messages = self._build_messages(task, context)
 
-            async for chunk in self.llm_service.chat(
+            async for chunk in self.llm_client.chat_stream(
                 messages=messages,
-                stream=True,
             ):
-                if chunk.type == "text" and chunk.content:
-                    yield chunk.content
+                yield chunk
 
             self.status = self.__class__.__base__.__bases__[0].IDLE  # type: ignore
 
@@ -184,15 +182,7 @@ class InterviewerAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         # 更新对话历史
         self._update_history("interviewer", content)
@@ -216,15 +206,7 @@ class InterviewerAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         # 更新对话历史
         self._update_history("interviewer", content)
@@ -248,15 +230,7 @@ class InterviewerAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         return AgentOutput(
             content=content,
@@ -277,15 +251,7 @@ class InterviewerAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         return AgentOutput(
             content=content,
@@ -308,15 +274,7 @@ class InterviewerAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         return AgentOutput(
             content=content,

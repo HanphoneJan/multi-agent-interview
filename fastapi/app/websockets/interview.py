@@ -649,8 +649,8 @@ async def generate_ai_response_stream(
 
             # Fallback to regular text-only response
             try:
-                from app.core.qwen_client import qwen_chat
-                full_response = await qwen_chat(llm_messages)
+                from app.core.llm_client import llm_chat
+                full_response = await llm_chat(llm_messages)
                 stream_success = True
                 print(f"Fallback response: {len(full_response)} chars")
             except Exception as fallback_e:

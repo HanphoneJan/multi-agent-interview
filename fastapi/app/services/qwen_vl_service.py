@@ -40,6 +40,7 @@ class QwenVLService:
 
     def __init__(self):
         settings = get_settings()
+        # Qwen-VL 使用专属 DashScope 配置（多模态视觉，不走统一 LLM）
         self.api_key = settings.DASHSCOPE_API_KEY or os.getenv("DASHSCOPE_API_KEY", "")
         self.base_url = getattr(
             settings,

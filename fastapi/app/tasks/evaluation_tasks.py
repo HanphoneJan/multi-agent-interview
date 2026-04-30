@@ -4,7 +4,7 @@ import asyncio
 from celery import Task
 
 from app.config import get_settings
-from app.core.qwen_client import qwen_chat_json
+from app.core.llm_client import llm_chat_json, get_llm_client
 from app.core.prompts import EVALUATION_PROMPT, REPORT_PROMPT
 from app.core.constants import (
     DEFAULT_EVALUATION_SCORE,
@@ -43,7 +43,7 @@ async def _evaluate_answer_with_qwen(answer_text: str) -> dict:
     """使用 Qwen 评估面试回答。"""
     prompt = EVALUATION_PROMPT.format(answer_text=answer_text or "（未提供回答内容）")
     messages = [{"role": "user", "content": prompt}]
-    raw = await qwen_chat_json(messages)
+    raw = await llm_chat_json(messages)
 
     evaluation_text = raw.get("evaluation_text") or DEFAULT_EVALUATION_UNAVAILABLE
     score = raw.get("score")
@@ -84,8 +84,8 @@ def evaluate_answer_task(self, question_id: int, answer_text: str):
     Returns:
         Evaluation result with score and feedback
     """
-    if not get_settings().QWEN_API_KEY:
-        logger.warning("QWEN_API_KEY 未配置，使用占位评估")
+    if not get_llm_client().is_configured():
+        logger.warning("LLM API key 未配置，使用占位评估")
         return {
             "question_id": question_id,
             "evaluation_text": QWEN_NOT_CONFIGURED_EVAL,
@@ -180,7 +180,7 @@ async def _generate_report_with_qwen(session_id: int, user_id: int) -> dict:
         )
     qa_text = "\n\n".join(lines)
 
-    if not get_settings().QWEN_API_KEY:
+    if not get_llm_client().is_configured():
         return {
             "session_id": session_id,
             "user_id": user_id,
@@ -192,7 +192,7 @@ async def _generate_report_with_qwen(session_id: int, user_id: int) -> dict:
 
     prompt = REPORT_PROMPT.format(qa_evaluations=qa_text)
     messages = [{"role": "user", "content": prompt}]
-    raw = await qwen_chat_json(messages)
+    raw = await llm_chat_json(messages)
 
     def _score(val, default: float = DEFAULT_REPORT_SCORE) -> str:
         if val is None:

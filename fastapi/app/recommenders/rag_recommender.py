@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import get_settings
-from app.core.qwen_client import qwen_chat_json
+from app.core.llm_client import llm_chat_json, get_llm_client
 from app.core.prompts import RAG_PROMPT_TEMPLATE
 from app.core.constants import (
     WEAK_AREA_THRESHOLD,
@@ -124,7 +124,7 @@ class RAGRecommender(BaseRecommender):
             return {"weak_areas": weak_areas, "recommendations": [], "overall_advice": RAG_NO_VECTOR_RESULTS_ADVICE}
 
         # Step 6: Generate LLM-based recommendations（使用 Qwen 或注入的 engine）
-        use_llm = self.llm_engine is not None or bool(get_settings().QWEN_API_KEY)
+        use_llm = self.llm_engine is not None or get_llm_client().is_configured()
         if use_llm:
             result = await self._generate_llm_recommendations(evaluation, top_resources[:limit])
         else:
@@ -395,13 +395,13 @@ class RAGRecommender(BaseRecommender):
         self, prompt: str, resources: list[dict[str, Any]]
     ) -> dict[str, Any]:
         """使用 Qwen 通义千问生成推荐。"""
-        if not get_settings().QWEN_API_KEY:
+        if not get_llm_client().is_configured():
             logger.warning("QWEN_API_KEY 未配置，使用 fallback 推荐")
             return self._generate_fallback_recommendations(resources)
 
         messages = [{"role": "user", "content": prompt}]
         try:
-            raw = await qwen_chat_json(messages)
+            raw = await llm_chat_json(messages)
         except Exception as e:
             logger.warning(f"Qwen 调用失败: {e}，使用 fallback")
             return self._generate_fallback_recommendations(resources)

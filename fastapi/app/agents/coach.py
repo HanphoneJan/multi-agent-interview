@@ -12,7 +12,7 @@ from app.agents.prompts.coach import (
     COACH_SYSTEM_PROMPT,
     COACH_TASK_TEMPLATES,
 )
-from app.services.qwen3_omni_http_service import Qwen3OmniHTTPService
+from app.core.llm_client import get_llm_client
 from app.utils.log_helper import get_logger
 
 logger = get_logger("agents.coach")
@@ -54,7 +54,7 @@ class CoachAgent(BaseAgent):
             llm_config=llm_config,
             agent_id=agent_id,
         )
-        self.llm_service = Qwen3OmniHTTPService()
+        self.llm_client = get_llm_client()
         self._recommendation_history: list[dict[str, Any]] = []
 
     async def execute(self, task: Task, context: dict[str, Any]) -> AgentOutput:
@@ -159,15 +159,7 @@ class CoachAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         # 存储推荐历史
         self._recommendation_history.append({
@@ -196,15 +188,7 @@ class CoachAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         # 存储推荐历史
         self._recommendation_history.append({
@@ -233,15 +217,7 @@ class CoachAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         # 存储推荐历史
         self._recommendation_history.append({
@@ -270,15 +246,7 @@ class CoachAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         # 存储推荐历史
         self._recommendation_history.append({
@@ -307,15 +275,7 @@ class CoachAgent(BaseAgent):
         """
         messages = self._build_messages(task, context)
 
-        response_chunks = []
-        async for chunk in self.llm_service.chat(
-            messages=messages,
-            stream=False,
-        ):
-            if chunk.type == "text" and chunk.content:
-                response_chunks.append(chunk.content)
-
-        content = "".join(response_chunks)
+        content = await self.llm_client.chat(messages=messages)
 
         return AgentOutput(
             content=content,
