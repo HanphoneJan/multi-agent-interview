@@ -303,8 +303,7 @@ async def request_password_reset(
     user = result.first()
 
     if not user:
-        # Don't reveal if email exists for security.
-        return {"message": "发送成功，请查收验证码"}
+        return {"message": "发送失败"}
 
     try:
         code = await VerificationService.create_code(request_data.email)
